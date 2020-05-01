@@ -3,10 +3,19 @@ package com.upgrad.FoodOrderingApp.service.businness.customer;
 import com.upgrad.FoodOrderingApp.service.businness.PasswordCryptographyProvider;
 import com.upgrad.FoodOrderingApp.service.dao.Customer.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
+import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 @Service
 public class UserAdminBusinessService {
@@ -25,11 +34,11 @@ public class UserAdminBusinessService {
     public Customers signup(Customers customers) throws SignUpRestrictedException {
         String password = customers.getPassword();
 
-        if(customers.getContact_number().isEmpty() || customers.getEmail().isEmpty() || customers.getFirstname().isEmpty() || customers.getPassword().isEmpty()){
+        if (customers.getContact_number().isEmpty() || customers.getEmail().isEmpty() || customers.getFirstname().isEmpty() || customers.getPassword().isEmpty()) {
             throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled.");
         }
 
-        if(!isValid(customers.getEmail()))
+        if (!isValid(customers.getEmail()))
             throw new SignUpRestrictedException("SGR-002", "Invalid email-id format!");
 
         if (!customers.getContact_number().matches("[0-9]+") || customers.getContact_number().length() != 10)
@@ -49,12 +58,37 @@ public class UserAdminBusinessService {
         }
 
 
-
-
         return customerDao.createCustomer(customers);
     }
 
 
+    @Transactional(noRollbackFor = {TransactionException.class})
+    public UserAuthTokenEntity signoutUser(String accessToken) throws AuthorizationFailedException {
+
+        UserAuthTokenEntity userAuthTokenEntity = customerDao.checkAuthToken(accessToken);
+        if (userAuthTokenEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in");
+        }
+
+        /**Customer is logged out. Log in again to access this endpoint.*/
+        ZonedDateTime getLogoutAt = userAuthTokenEntity.getLogout_at();
+        ZonedDateTime dateCurrent = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
+        if (getLogoutAt != null)
+            if (getLogoutAt.isBefore(dateCurrent))
+                throw new AuthorizationFailedException("ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
+
+
+        /**Your session is expired. Log in again to access this endpoint*/
+        ZonedDateTime getLoginTime = userAuthTokenEntity.getLogin_at();
+
+        if (getLoginTime != null)
+            if (getLoginTime.plusHours(1).isAfter(dateCurrent))
+                throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
+
+
+        return customerDao.signoutUser(userAuthTokenEntity);
+
+    }
 
 }
 

@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Repository
 public class CustomerDao {
@@ -63,10 +66,23 @@ public class CustomerDao {
             e.printStackTrace();
         }
     }
+    public UserAuthTokenEntity checkAuthToken(final String accessToken) {
 
+        try {
+            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public void updateUser(final Customers customer) {
         entityManager.merge(customer);
     }
 
+    @Transactional
+    public UserAuthTokenEntity signoutUser(final UserAuthTokenEntity userAuthTokenEntity) {
+        userAuthTokenEntity.setLogout_at( ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
+        entityManager.merge(userAuthTokenEntity);
+        return  userAuthTokenEntity;
+    }
 }

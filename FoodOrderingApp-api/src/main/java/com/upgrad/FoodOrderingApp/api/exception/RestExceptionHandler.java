@@ -44,11 +44,11 @@ public class RestExceptionHandler {
 
 
 */
-  /* @ExceptionHandler(AuthenticationFailedException.class)
+   @ExceptionHandler(AuthorizationFailedException.class)
    public ResponseEntity<ErrorResponse> AuthorizationFailedException(AuthorizationFailedException exe, WebRequest request){
        return new ResponseEntity<ErrorResponse>(
                new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.NOT_FOUND
        );
-   }*/
+   }
 
 }
