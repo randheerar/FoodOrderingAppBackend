@@ -72,7 +72,7 @@ public class UserAdminBusinessService {
 
     @Transactional(noRollbackFor = {TransactionException.class})
     public UserAuthTokenEntity checkAccessToken(String accessToken) throws AuthorizationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = customerDao.checkAuthToken(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity = customerDao.checkAuthToken(accessToken.replace("Bearer ",""));
         if (userAuthTokenEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in");
         }
