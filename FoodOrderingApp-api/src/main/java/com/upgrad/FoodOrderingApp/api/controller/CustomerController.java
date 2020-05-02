@@ -1,26 +1,20 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
-import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
-import com.upgrad.FoodOrderingApp.service.businness.customer.AuthenticationService;
-import com.upgrad.FoodOrderingApp.service.businness.customer.SignoutBusinessService;
-import com.upgrad.FoodOrderingApp.service.businness.customer.SignupBusinessService;
+import com.upgrad.FoodOrderingApp.api.model.*;
+import com.upgrad.FoodOrderingApp.service.businness.customer.*;
 import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerLoginRseponse;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
 import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 import java.util.UUID;
@@ -37,6 +31,12 @@ public class CustomerController {
 
     @Autowired
     private SignupBusinessService signupBusinessService;
+
+    @Autowired
+    private CustomerUpdateService customerUpdateService;
+
+    @Autowired
+    private UpdatePasswordService updatePasswordService;
 
 
 
@@ -67,6 +67,8 @@ public class CustomerController {
 
 
     }
+
+
     @RequestMapping(method = RequestMethod.POST, path = "/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> signout(final String accessToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity= signoutBusinessService.signout(accessToken);
@@ -91,13 +93,38 @@ public class CustomerController {
         customer.setPassword(signupUserRequest.getPassword());
         customer.setContact_number(signupUserRequest.getContactNumber());
         customer.setSalt("1234abc");
-
-
         final Customers createdUsers = signupBusinessService.signup(customer);
         SignupCustomerResponse userResponse = new SignupCustomerResponse().id(createdUsers.getUuid()).status("CUSTOMER SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SignupCustomerResponse>(userResponse, HttpStatus.CREATED);
     }
 
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdateCustomerResponse> updateQuestion(@RequestParam String accesstoken,UpdateCustomerRequest updateCustomerRequest) throws UpdateCustomerException, AuthorizationFailedException {
+        final Customers customer = new Customers();
+        customer.setFirstname(updateCustomerRequest.getFirstName());
+        customer.setLastname(updateCustomerRequest.getLastName());
+        Customers customerUpdated= customerUpdateService.edit( accesstoken.replace("Bearer ",""),customer);
+        UpdateCustomerResponse updateCustomerResponse=new UpdateCustomerResponse();
+        updateCustomerResponse.setFirstName(customerUpdated.getFirstname());
+        updateCustomerResponse.setLastName(customerUpdated.getLastname());
+        updateCustomerResponse.setId(customerUpdated.getUuid()+"");
+        updateCustomerResponse.setStatus("200");
+        return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/password", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdatePasswordResponse> updatePassword(@RequestParam String accesstoken,UpdatePasswordRequest updatePasswordRequest) throws UpdateCustomerException, AuthorizationFailedException {
+
+
+
+        Customers customerUpdated= updatePasswordService.updatePassword( accesstoken.replace("Bearer ",""),updatePasswordRequest.getOldPassword(),updatePasswordRequest.getNewPassword());
+
+        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
+        updatePasswordResponse.setId(customerUpdated.getUuid());
+        updatePasswordResponse.setStatus("200");
+        return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse, HttpStatus.OK);
+    }
 
 
 

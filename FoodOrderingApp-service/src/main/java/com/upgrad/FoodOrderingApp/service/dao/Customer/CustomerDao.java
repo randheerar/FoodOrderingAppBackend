@@ -85,4 +85,25 @@ public class CustomerDao {
         entityManager.merge(userAuthTokenEntity);
         return  userAuthTokenEntity;
     }
+
+    @Transactional
+    public Customers  editCustomer(Customers customers)
+    {
+        try {
+/*             entityManager.createNamedQuery("editById", Customers.class).setParameter("firstname", customers.getFirstname()).setParameter("lastname", customers.getLastname()).setParameter("uuid", customers.getUuid())
+              .executeUpdate();*/
+            entityManager.createNamedQuery("editById", Customers.class)
+                    .setParameter(1, customers.getFirstname())
+                    .setParameter(2, customers.getLastname())
+                    .setParameter(3, customers.getUuid())
+                    .executeUpdate();
+
+            //Execute the delete query
+           // entityManager.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return customers;
+    }
 }

@@ -8,11 +8,16 @@ import java.io.Serializable;
 @Entity
 @Table(name = "customer")
 
-@SqlResultSetMapping(name="deleteUserResult", columns = { @ColumnResult(name = "count")})
+@SqlResultSetMapping(name="Result", columns = { @ColumnResult(name = "count")})
+
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name    =   "deleteUserById",
-                query   =   "DELETE FROM users WHERE id = ?1",resultSetMapping = "deleteUserResult"
+                query   =   "DELETE FROM users WHERE id = ?1",resultSetMapping = "Result"
+        ),
+        @NamedNativeQuery(
+                name    =   "editById",
+                query   =   "UPDATE customer SET firstname=?1,lastname=?2 where uuid =?3",resultSetMapping = "Result"
         )
 })
 @NamedQueries(
@@ -20,7 +25,7 @@ import java.io.Serializable;
                 @NamedQuery(name = "userByUuid", query = "select u from Customers u where u.uuid = :uuid"),
                 @NamedQuery(name = "userByEmail", query = "select u from Customers u where u.email =:email"),
                 @NamedQuery(name = "userByPhone", query = "select u from Customers u where u.contact_number =:contact_number"),
-                @NamedQuery(name = "userById", query = "select u from Customers u where u.id =:id")
+                @NamedQuery(name = "userById", query = "select u from Customers u where u.id =:id"),
 
 
         }
