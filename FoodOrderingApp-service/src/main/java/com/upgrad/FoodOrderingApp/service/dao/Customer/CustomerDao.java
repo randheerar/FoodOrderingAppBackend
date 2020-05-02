@@ -55,6 +55,19 @@ public class CustomerDao {
             return null;
         }
     }
+
+    public Customers getCustomerByUUID(String UUID)
+    {
+
+        try {
+            return entityManager.createNamedQuery("userByUuid", Customers.class).setParameter("uuid", UUID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+
     public void deleteAuthTokenById(int id)
     {
         try {
@@ -75,6 +88,7 @@ public class CustomerDao {
         }
     }
 
+    @Transactional
     public void updateUser(final Customers customer) {
         entityManager.merge(customer);
     }

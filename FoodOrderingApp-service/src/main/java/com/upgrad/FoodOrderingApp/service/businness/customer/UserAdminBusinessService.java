@@ -66,27 +66,7 @@ public class UserAdminBusinessService {
     public UserAuthTokenEntity signoutUser(String accessToken) throws AuthorizationFailedException {
 
         UserAuthTokenEntity userAuthTokenEntity = checkAccessToken(accessToken);
-       /* if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in");
-        }
-
-        *//**Customer is logged out. Log in again to access this endpoint.*//*
-        ZonedDateTime getLogoutAt = userAuthTokenEntity.getLogout_at();
-        ZonedDateTime dateCurrent = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
-        if (getLogoutAt != null)
-            if (getLogoutAt.isBefore(dateCurrent))
-                throw new AuthorizationFailedException("ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
-
-
-        *//**Your session is expired. Log in again to access this endpoint*//*
-        ZonedDateTime getLoginTime = userAuthTokenEntity.getLogin_at();
-
-        if (getLoginTime != null)
-            if (getLoginTime.plusHours(1).isAfter(dateCurrent))
-                throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
-
-*/
-        return customerDao.signoutUser(userAuthTokenEntity);
+         return customerDao.signoutUser(userAuthTokenEntity);
 
     }
 
@@ -104,10 +84,10 @@ public class UserAdminBusinessService {
 
 
         /**Your session is expired. Log in again to access this endpoint*/
-        ZonedDateTime getLoginTime = userAuthTokenEntity.getLogin_at();
+        ZonedDateTime expireTime = userAuthTokenEntity.getExpires_at();
 
-        if (getLoginTime != null)
-            if (getLoginTime.plusHours(1).isAfter(dateCurrent))
+        if (expireTime != null)
+            if (expireTime.isBefore(dateCurrent))
                 throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
 
 
