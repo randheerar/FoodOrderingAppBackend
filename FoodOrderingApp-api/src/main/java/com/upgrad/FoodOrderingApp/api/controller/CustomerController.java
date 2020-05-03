@@ -24,20 +24,7 @@ import java.util.UUID;
 public class CustomerController {
 
     @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private SignoutBusinessService signoutBusinessService;
-
-    @Autowired
-    private SignupBusinessService signupBusinessService;
-
-    @Autowired
-    private CustomerUpdateService customerUpdateService;
-
-    @Autowired
-    private UpdatePasswordService updatePasswordService;
-
+    private CustomerService customerService;
 
 
 
@@ -53,7 +40,7 @@ public class CustomerController {
         {
             throw  new AuthenticationFailedException("ATH-003","Incorrect format of decoded customer name and password");
         }
-        CustomerLoginRseponse customerLoginRseponse = authenticationService.authenticate(decodedArray[0],decodedArray[1]);
+        CustomerLoginRseponse customerLoginRseponse = customerService.authenticate(decodedArray[0],decodedArray[1]);
         LoginResponse authorizedUserResponse =  new LoginResponse();
         authorizedUserResponse.setId(customerLoginRseponse.getUUID());
         authorizedUserResponse.setMessage("LOGGED IN SUCCESSFULLY");
@@ -71,7 +58,7 @@ public class CustomerController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> signout(final String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity= signoutBusinessService.signout(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity= customerService.signout(accessToken);
         if(userAuthTokenEntity==null)
             throw new AuthorizationFailedException("SGR-001","Customer is not Logged in.");
 
@@ -93,7 +80,7 @@ public class CustomerController {
         customer.setPassword(signupUserRequest.getPassword());
         customer.setContact_number(signupUserRequest.getContactNumber());
         customer.setSalt("1234abc");
-        final Customers createdUsers = signupBusinessService.signup(customer);
+        final Customers createdUsers = customerService.signup(customer);
         SignupCustomerResponse userResponse = new SignupCustomerResponse().id(createdUsers.getUuid()).status("CUSTOMER SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SignupCustomerResponse>(userResponse, HttpStatus.CREATED);
     }
@@ -104,7 +91,7 @@ public class CustomerController {
         final Customers customer = new Customers();
         customer.setFirstname(updateCustomerRequest.getFirstName());
         customer.setLastname(updateCustomerRequest.getLastName());
-        Customers customerUpdated= customerUpdateService.edit( accesstoken.replace("Bearer ",""),customer);
+        Customers customerUpdated= customerService.edit( accesstoken.replace("Bearer ",""),customer);
         UpdateCustomerResponse updateCustomerResponse=new UpdateCustomerResponse();
         updateCustomerResponse.setFirstName(customerUpdated.getFirstname());
         updateCustomerResponse.setLastName(customerUpdated.getLastname());
@@ -118,7 +105,7 @@ public class CustomerController {
 
 
 
-        Customers customerUpdated= updatePasswordService.updatePassword( accesstoken.replace("Bearer ",""),updatePasswordRequest.getOldPassword(),updatePasswordRequest.getNewPassword());
+        Customers customerUpdated= customerService.updatePassword( accesstoken.replace("Bearer ",""),updatePasswordRequest.getOldPassword(),updatePasswordRequest.getNewPassword());
 
         UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
         updatePasswordResponse.setId(customerUpdated.getUuid());
