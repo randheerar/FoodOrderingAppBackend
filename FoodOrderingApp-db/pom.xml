@@ -71,8 +71,7 @@
                     <dependency>
                         <groupId>org.postgresql</groupId>
                         <artifactId>postgresql</artifactId>
-                        <version>42.2.2.jre7</version>
-                        <scope>runtime</scope>
+                        <version>${postgresql.driver.version}</version>
                     </dependency>
 
 
@@ -81,7 +80,7 @@
                 <configuration>
                     <driver>${postgresql.driver.name}</driver>
                     <url>jdbc:postgresql://${server.host}:${server.port}/${database.name}</url>
-                    <username>${database.username}</username>
+                    <username>${database.user}</username>
                     <password>${database.password}</password>
                     <autocommit>true</autocommit>
                     <onError>abort</onError>
