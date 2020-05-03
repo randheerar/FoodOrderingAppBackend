@@ -4,27 +4,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
 @Table(name = "address")
 
-@SqlResultSetMapping(name="AddressResult", columns = { @ColumnResult(name = "count")})
+@SqlResultSetMapping(name="AddressResult", columns = { @ColumnResult(name = "id")})
 
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name    =   "deleteAddressById",
-                query   =   "DELETE FROM address WHERE id = ?1",resultSetMapping = "Result"
+                query   =   "DELETE FROM address WHERE uuid = ?1",resultSetMapping = "Result"
         ),
         @NamedNativeQuery(
-                name    =   "editAddressById",
-                query   =   "UPDATE address SET firstname=?1,lastname=?2 where uuid =?3",resultSetMapping = "Result"
+                name    =   "getAddress",
+                query   =   "select customer.* as customer,address.* from customer_address inner join customer on customer_address.customer_id=customer.id inner join address on customer_address.address_id=address.id where customer.id=?1",resultSetMapping = "Result"
         )
 })
 @NamedQueries(
         {
 
                 @NamedQuery(name = "addressById", query = "select u from Address u where u.id =:id"),
+                @NamedQuery(name = "getaddress", query = "select u from Address u"),
+                @NamedQuery(name = "getAddressByUUID", query = "select u from Address u where u.uuid=:uuid"),
 
 
         }
@@ -32,6 +38,18 @@ import java.io.Serializable;
 
 
 public class Address implements Serializable {
+   /* @OneToMany(targetEntity=CustomerAddress.class ,mappedBy = "address", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<CustomerAddress> customerAddresses=new HashSet<>();
+
+    public Set<CustomerAddress> getCustomerAddresses() {
+        return customerAddresses;
+    }
+
+    public void setCustomerAddresses(Set<CustomerAddress> customerAddresses) {
+        this.customerAddresses = customerAddresses;
+    }*/
+
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)

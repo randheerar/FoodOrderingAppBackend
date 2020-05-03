@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "customer")
@@ -35,6 +37,20 @@ public class Customers implements Serializable {
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     int id;
+
+   /* @OneToMany(targetEntity=CustomerAddress.class,mappedBy = "customers",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<CustomerAddress> customerAddresses = new HashSet<>();
+
+
+    public Set<CustomerAddress> getCustomerAddresses() {
+        return customerAddresses;
+    }
+
+    public void setCustomerAddresses(Set<CustomerAddress> customerAddresses) {
+        this.customerAddresses = customerAddresses;
+    }*/
+
+
 
     @Column(name = "uuid")
     @NotNull

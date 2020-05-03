@@ -5,7 +5,44 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "customer_address")
+
+@SqlResultSetMapping(name="AddressResultById", columns = { @ColumnResult(name = "id")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name    =   "getAddressbyId",
+                query   =   "select customer.* as customer,address.* from customer_address inner join customer on customer_address.customer_id=customer.id inner join address on customer_address.address_id=address.id where customer.id=?1",resultSetMapping = "Result"
+        )
+})
+
+
+
 public class CustomerAddress implements Serializable {
+
+   /* @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "address_id")
+    private  Address address;
+
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "customer_id")
+    private  Customers customers;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Customers getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(Customers customers) {
+        this.customers = customers;
+    }*/
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -16,7 +53,6 @@ public class CustomerAddress implements Serializable {
     private int customer_id;
     @Column(name = "address_id")
     private int address_id;
-
 
     public int getId() {
         return id;

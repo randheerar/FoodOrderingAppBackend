@@ -2,6 +2,7 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.customer.UserAdminBusinessService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
@@ -37,14 +38,14 @@ public class CustomerControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CustomerService mockCustomerService;
+    private UserAdminBusinessService mockCustomerService;
 
     // ----------------------------- POST /customer/signup --------------------------------
 
     //This test case passes when you are able to signup successfully.
     @Test
     public void shouldSignUpForValidRequest() throws Exception {
-        final CustomerEntity createdCustomerEntity = new CustomerEntity();
+        final Customers createdCustomerEntity = new CustomerEntity();
         final String customerId = UUID.randomUUID().toString();
         createdCustomerEntity.setUuid(customerId);
         when(mockCustomerService.saveCustomer(any())).thenReturn(createdCustomerEntity);
@@ -484,4 +485,5 @@ public class CustomerControllerTest {
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
     }
 
-}*/
+}
+*/
