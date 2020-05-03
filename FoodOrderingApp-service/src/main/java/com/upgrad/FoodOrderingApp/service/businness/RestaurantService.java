@@ -75,4 +75,23 @@ public class RestaurantService {
 
         return restaurantListByCategoryId;
     }
+    /**
+     *  returns the restaurant based on input restaurant ID
+     *  @param=restaurant Id
+     *  @return Resturant
+     **/
+    public RestaurantEntity restaurantByUUID(String uuid) throws RestaurantNotFoundException {
+        if (uuid.equals("")) {
+            throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
+        }
+
+        RestaurantEntity restaurantByRestaurantId = restaurantDao.restaurantByUUID(uuid);
+
+        if (restaurantByRestaurantId == null) {
+            throw new RestaurantNotFoundException("RNF-001", "No Restaurant By this Id");
+        }
+
+        return restaurantByRestaurantId;
+    }
+
 }

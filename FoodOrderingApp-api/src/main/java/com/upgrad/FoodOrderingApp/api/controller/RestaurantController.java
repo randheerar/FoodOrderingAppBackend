@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
@@ -152,6 +153,50 @@ public class RestaurantController {
         }
 
         return new ResponseEntity<RestaurantListResponse>(restaurantResponseByCategoryId, HttpStatus.OK);
+    }
+
+    /**
+     * method to get RestaurantId
+     * @return corresponding HTTP status
+     **/
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.GET, path = "/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<RestaurantDetailsResponse> getRestaurantById(@PathVariable("restaurant_id") final String restaurantId)
+            throws RestaurantNotFoundException {
+
+        RestaurantEntity restaurantByRestaurantId = restaurantService.restaurantByUUID(restaurantId);
+
+        RestaurantDetailsResponseAddressState state = new RestaurantDetailsResponseAddressState()
+                .id(UUID.fromString(restaurantByRestaurantId.getAddress().getState().getUuid())).
+                        stateName(restaurantByRestaurantId.getAddress().getState().getStateName());
+
+        RestaurantDetailsResponseAddress responseAddress = new RestaurantDetailsResponseAddress().
+                id(UUID.fromString(restaurantByRestaurantId.getAddress().getUuid())).
+                flatBuildingName(restaurantByRestaurantId.getAddress().getFlatBuildNo()).
+                locality(restaurantByRestaurantId.getAddress().getLocality())
+                .city(restaurantByRestaurantId.getAddress().getCity())
+                .pincode(restaurantByRestaurantId.getAddress().getPincode()).state(state);
+
+        RestaurantDetailsResponse restaurantDetailsResponse = new RestaurantDetailsResponse()
+                .id(UUID.fromString(restaurantByRestaurantId.getUuid()))
+                .restaurantName(restaurantByRestaurantId.getRestaurantName())
+                .photoURL(restaurantByRestaurantId.getPhotoUrl())
+                .customerRating(new BigDecimal(restaurantByRestaurantId.getCustomerRating()))
+                .averagePrice(restaurantByRestaurantId.getAvgPrice())
+                .numberCustomersRated(restaurantByRestaurantId.getNumberCustomersRated())
+                .address(responseAddress);
+
+        List<CategoryEntity> restaurantCategoryList = categoryService.getCategoriesByRestaurant(restaurantId);
+
+        for (CategoryEntity categoryEntity : restaurantCategoryList) {
+            CategoryList restaurantCategories = new CategoryList()
+                    .id(UUID.fromString(categoryEntity.getUuid()))
+                    .categoryName(categoryEntity.getCategoryName());
+
+            restaurantDetailsResponse.addCategoriesItem(restaurantCategories);
+        }
+
+        return new ResponseEntity<RestaurantDetailsResponse>(restaurantDetailsResponse, HttpStatus.OK);
     }
 
 }
