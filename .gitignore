@@ -1,1 +1,4 @@
 /.idea/
+/FoodOrderingApp-service/target/
+/FoodOrderingApp-db/target/
+/FoodOrderingApp-api/target/
