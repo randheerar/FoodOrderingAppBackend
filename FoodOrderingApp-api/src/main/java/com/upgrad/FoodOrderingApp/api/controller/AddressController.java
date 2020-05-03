@@ -3,7 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.customer.AddressService;
-import com.upgrad.FoodOrderingApp.service.businness.customer.UserAdminBusinessService;
+import com.upgrad.FoodOrderingApp.service.businness.customer.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
 import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
 import com.upgrad.FoodOrderingApp.service.entity.customer.State;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequestMapping("/")
 public class AddressController {
     @Autowired
-    UserAdminBusinessService userAdminBusinessService;
+    CustomerService customerService;
 
     @Autowired
     AddressService addressService;
@@ -33,7 +33,7 @@ public class AddressController {
     public ResponseEntity<SaveAddressResponse> SaveAddressRequest(@RequestParam String accesstoken, final SaveAddressRequest saveAddressRequest) throws AddressNotFoundException, AuthorizationFailedException {
 
 
-        UserAuthTokenEntity userAuthTokenEntity = userAdminBusinessService.checkAccessToken(accesstoken);
+        UserAuthTokenEntity userAuthTokenEntity = customerService.checkAccessToken(accesstoken);
         final Address address = new Address();
         address.setUuid(UUID.randomUUID().toString());
         address.setActive(1);
