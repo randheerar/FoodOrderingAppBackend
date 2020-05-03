@@ -47,6 +47,9 @@ public class AddressEntity implements Serializable {
     @NotNull
     private StateEntity stateId;
 
+    @Column(name="active")
+    private Integer active;
+
     public Integer getId() {
         return id;
     }
@@ -66,6 +69,7 @@ public class AddressEntity implements Serializable {
     public String getFlatBuildNo() {
         return flatBuildingNumber;
     }
+
     public String getLocality() {
         return locality;
     }
@@ -84,5 +88,25 @@ public class AddressEntity implements Serializable {
 
     public void setState(StateEntity stateId) {
         this.stateId = stateId;
+    }
+
+    public Integer getActive() {
+        return active;
+    }
+
+    public void setActive(Integer active) {
+        this.active = active;
+    }
+
+    public AddressEntity() {}
+
+    public AddressEntity(String uuid, String flatBuildNo, String locality, String city, String pincode, StateEntity stateEntity) {
+        this.uuid = uuid;
+        this.flatBuildingNumber = flatBuildNo;
+        this.locality = locality;
+        this.city = city;
+        this.pincode = pincode;
+        this.stateId = stateEntity;
+        this.active = 1;
     }
 }

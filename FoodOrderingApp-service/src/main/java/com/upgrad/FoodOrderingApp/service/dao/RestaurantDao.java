@@ -34,4 +34,14 @@ public class RestaurantDao {
             return null;
         }
     }
+
+    /**
+     * update restaurant details
+     * @param restaurantEntity
+     * @return restaurantEntity
+     */
+    public RestaurantEntity updateRestaurantEntity(RestaurantEntity restaurantEntity){
+        entityManager.merge(restaurantEntity);
+        return  restaurantEntity;
+    }
 }

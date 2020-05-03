@@ -5,9 +5,12 @@ import com.upgrad.FoodOrderingApp.service.dao.RestaurantDao;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -92,6 +95,29 @@ public class RestaurantService {
         }
 
         return restaurantByRestaurantId;
+    }
+
+    /**
+     *  updates the restaurant ratings if input is between 1&5
+     *  @param=restaurant Id
+     *  @return updated restaurant details
+     **/
+    @Transactional(propagation = Propagation.REQUIRED)
+    public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity, Double newRating)
+            throws InvalidRatingException {
+        if (newRating < 1.0 || newRating > 5.0) {
+            throw new InvalidRatingException("IRE-001", "Restaurant should be in the range of 1 to 5");
+        }
+
+        Double newAvgRating =
+                ((restaurantEntity.getCustomerRating().doubleValue()) *
+                        ((double) restaurantEntity.getNumberCustomersRated()) + newRating) /
+                        ((double) restaurantEntity.getNumberCustomersRated() + 1);
+
+        restaurantEntity.setCustomerRating(newAvgRating);
+        restaurantEntity.setNumberCustomersRated(restaurantEntity.getNumberCustomersRated() + 1);
+
+        return restaurantDao.updateRestaurantEntity(restaurantEntity);
     }
 
 }
