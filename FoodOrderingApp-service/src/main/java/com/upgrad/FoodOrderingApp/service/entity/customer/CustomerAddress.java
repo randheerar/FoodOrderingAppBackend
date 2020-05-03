@@ -48,7 +48,6 @@ public class CustomerAddress implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
-
     @Column(name = "customer_id")
     private int customer_id;
     @Column(name = "address_id")

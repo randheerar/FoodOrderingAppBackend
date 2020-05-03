@@ -20,11 +20,11 @@ public class AddressService {
     @Autowired
     private CustomerAdressDao customerAdressDao;
     @Autowired
-    UserAdminBusinessService userAdminBusinessService;
+    CustomerService customerService;
 
 
     public List<Address> getAddressList(String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity=userAdminBusinessService.checkAccessToken(accessToken);
+        UserAuthTokenEntity userAuthTokenEntity= customerService.checkAccessToken(accessToken);
 
         return addressDao.getAddress(userAuthTokenEntity.getUser_id());
     }
@@ -55,7 +55,7 @@ public class AddressService {
         if(uuid.isEmpty())
             throw new AddressNotFoundException("ANF-005","Address id can not be empty");
 
-        userAdminBusinessService.checkAccessToken(accesstoken);
+        customerService.checkAccessToken(accesstoken);
         if(addressDao.getAddressByUUID(uuid)==null)
             throw new AddressNotFoundException("ANF-003","No address by this id");
 
