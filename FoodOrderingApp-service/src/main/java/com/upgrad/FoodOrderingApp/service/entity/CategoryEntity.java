@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="category")
@@ -29,6 +31,11 @@ public class CategoryEntity implements Serializable {
     @NotNull
     private String categoryName;
 
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+    private List<RestaurantEntity> restaurants = new ArrayList<>();
+
     public Integer getId() {
         return id;
     }
@@ -47,6 +54,10 @@ public class CategoryEntity implements Serializable {
 
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public List<RestaurantEntity> getRestaurants() {
+        return restaurants;
     }
 
     public CategoryEntity() {
