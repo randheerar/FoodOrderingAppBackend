@@ -26,7 +26,7 @@ public class RestaurantController {
     private CategoryService categoryService;
 
     /**
-     * get to restaurants in order of their ratings
+     * retrieve all restaurants in order of their ratings
      * @return response with the desired http status code
      **/
     @CrossOrigin

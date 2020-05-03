@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="restaurant")
@@ -53,6 +55,11 @@ public class RestaurantEntity implements Serializable {
     @JoinColumn(name="address_id")
     private AddressEntity address;
 
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<CategoryEntity> categories = new ArrayList<>();
+
     public Integer getId() {
         return id;
     }
@@ -91,6 +98,10 @@ public class RestaurantEntity implements Serializable {
 
     public AddressEntity getAddress() {
         return address;
+    }
+
+    public List<CategoryEntity> getCategories() {
+        return categories;
     }
 
     public RestaurantEntity() {

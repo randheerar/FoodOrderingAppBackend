@@ -22,4 +22,16 @@ public class RestaurantDao {
         List<RestaurantEntity> restaurantEntities = entityManager.createNamedQuery("getAllRestaurantsByRating", RestaurantEntity.class).getResultList();
         return restaurantEntities;
     }
+
+    /**
+     * queries to DB to get the single restaurant from DB
+     * @return Restaurant List
+     **/
+    public RestaurantEntity restaurantByUUID(String uuid){
+        try {
+            return entityManager.createNamedQuery("restaurantByUUID", RestaurantEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nre){
+            return null;
+        }
+    }
 }
