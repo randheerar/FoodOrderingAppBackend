@@ -107,8 +107,8 @@ public class CustomerDao {
 /*             entityManager.createNamedQuery("editById", Customers.class).setParameter("firstname", customers.getFirstname()).setParameter("lastname", customers.getLastname()).setParameter("uuid", customers.getUuid())
               .executeUpdate();*/
             entityManager.createNamedQuery("editById", Customers.class)
-                    .setParameter(1, customers.getFirstname())
-                    .setParameter(2, customers.getLastname())
+                    .setParameter(1, customers.getFirstName())
+                    .setParameter(2, customers.getLastName())
                     .setParameter(3, customers.getUuid())
                     .executeUpdate();
 

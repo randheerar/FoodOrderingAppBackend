@@ -26,11 +26,8 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-
-
-
     @RequestMapping(method = RequestMethod.POST, path = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LoginResponse> SignIn(final String authorization) throws AuthenticationFailedException {
+    public ResponseEntity<LoginResponse> signin(final String authorization) throws AuthenticationFailedException {
         String[] decodedArray;
         try {
             byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
@@ -71,14 +68,14 @@ public class CustomerController {
 
 
     @RequestMapping(method = RequestMethod.POST, path = "/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SignupCustomerResponse> SignupCustomerRequest(final SignupCustomerRequest signupUserRequest) throws SignUpRestrictedException {
+    public ResponseEntity<SignupCustomerResponse> signupCustomerRequest(final SignupCustomerRequest signupUserRequest) throws SignUpRestrictedException {
         final Customers customer = new Customers();
         customer.setUuid(UUID.randomUUID().toString());
-        customer.setFirstname(signupUserRequest.getFirstName());
-        customer.setLastname(signupUserRequest.getLastName());
-        customer.setEmail(signupUserRequest.getEmailAddress());
+        customer.setFirstName(signupUserRequest.getFirstName());
+        customer.setLastName(signupUserRequest.getLastName());
+        customer.setEmailAddress(signupUserRequest.getEmailAddress());
         customer.setPassword(signupUserRequest.getPassword());
-        customer.setContact_number(signupUserRequest.getContactNumber());
+        customer.setContactNumber(signupUserRequest.getContactNumber());
         customer.setSalt("1234abc");
         final Customers createdUsers = customerService.signup(customer);
         SignupCustomerResponse userResponse = new SignupCustomerResponse().id(createdUsers.getUuid()).status("CUSTOMER SUCCESSFULLY REGISTERED");
@@ -89,12 +86,12 @@ public class CustomerController {
     @RequestMapping(method = RequestMethod.PUT, path = "/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdateCustomerResponse> updateQuestion(@RequestParam String accesstoken,UpdateCustomerRequest updateCustomerRequest) throws UpdateCustomerException, AuthorizationFailedException {
         final Customers customer = new Customers();
-        customer.setFirstname(updateCustomerRequest.getFirstName());
-        customer.setLastname(updateCustomerRequest.getLastName());
+        customer.setFirstName(updateCustomerRequest.getFirstName());
+        customer.setLastName(updateCustomerRequest.getLastName());
         Customers customerUpdated= customerService.edit( accesstoken.replace("Bearer ",""),customer);
         UpdateCustomerResponse updateCustomerResponse=new UpdateCustomerResponse();
-        updateCustomerResponse.setFirstName(customerUpdated.getFirstname());
-        updateCustomerResponse.setLastName(customerUpdated.getLastname());
+        updateCustomerResponse.setFirstName(customerUpdated.getFirstName());
+        updateCustomerResponse.setLastName(customerUpdated.getLastName());
         updateCustomerResponse.setId(customerUpdated.getUuid()+"");
         updateCustomerResponse.setStatus("200");
         return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, HttpStatus.OK);
@@ -104,17 +101,11 @@ public class CustomerController {
     public ResponseEntity<UpdatePasswordResponse> updatePassword(@RequestParam String accesstoken,UpdatePasswordRequest updatePasswordRequest) throws UpdateCustomerException, AuthorizationFailedException {
 
 
+        Customers customerUpdated = customerService.updatePassword(accesstoken.replace("Bearer ", ""), updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
 
-        Customers customerUpdated= customerService.updatePassword( accesstoken.replace("Bearer ",""),updatePasswordRequest.getOldPassword(),updatePasswordRequest.getNewPassword());
-
-        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
+        UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse();
         updatePasswordResponse.setId(customerUpdated.getUuid());
         updatePasswordResponse.setStatus("200");
         return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse, HttpStatus.OK);
     }
-
-
-
-
-
 }

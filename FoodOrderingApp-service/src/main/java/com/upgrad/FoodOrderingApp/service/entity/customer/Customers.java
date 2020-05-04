@@ -4,7 +4,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,59 +35,97 @@ import java.util.Set;
         }
 )
 public class Customers implements Serializable {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    int id;
+    private Integer id;
 
-   /* @OneToMany(targetEntity=CustomerAddress.class,mappedBy = "customers",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<CustomerAddress> customerAddresses = new HashSet<>();
-
-
-    public Set<CustomerAddress> getCustomerAddresses() {
-        return customerAddresses;
-    }
-
-    public void setCustomerAddresses(Set<CustomerAddress> customerAddresses) {
-        this.customerAddresses = customerAddresses;
-    }*/
-
-
-
-    @Column(name = "uuid")
     @NotNull
     @Size(max = 200)
-    String uuid;
+    @Column(name = "uuid", unique = true)
+    private String uuid;
+
+    @NotNull
+    @Size(max = 30)
     @Column(name = "firstname")
-    @NotNull
+    private String firstName;
+
     @Size(max = 30)
-    String firstname;
     @Column(name = "lastname")
+    private String lastName;
+
+    @Size(max = 50)
+    @Column(name = "email")
+    private String emailAddress;
+
     @NotNull
     @Size(max = 30)
-    String lastname;
-    @Column(name = "email")
-    @NotNull
-    @Size(max = 50)
-    String email;
-    @Column(name = "password")
+    @Column(name = "contact_number", unique = true)
+    private String contactNumber;
+
     @NotNull
     @Size(max = 255)
-    String password;
-    @Column(name = "salt")
+    @Column(name = "password")
+    private String password;
+
     @NotNull
-    @Size(max = 200)
-    String salt;
+    @Size(max = 255)
+    @Column(name = "salt")
+    private String salt;
 
-    @Column(name = "contact_number")
-    @Size(max = 30)
-    String contact_number;
+    @OneToMany
+    @JoinTable(
+            name = "customer_address",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private List<Address> addresses = new ArrayList<>();
 
-    public int getId() {
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -97,38 +137,6 @@ public class Customers implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getSalt() {
         return salt;
     }
@@ -137,11 +145,11 @@ public class Customers implements Serializable {
         this.salt = salt;
     }
 
-    public String getContact_number() {
-        return contact_number;
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setContact_number(String contact_number) {
-        this.contact_number = contact_number;
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 }

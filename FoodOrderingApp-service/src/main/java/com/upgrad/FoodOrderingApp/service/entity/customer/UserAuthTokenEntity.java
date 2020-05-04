@@ -1,6 +1,10 @@
 package com.upgrad.FoodOrderingApp.service.entity.customer;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 
@@ -20,7 +24,7 @@ import java.time.ZonedDateTime;
 
 @NamedQueries({
 
-        @NamedQuery(name = "userAuthTokenByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.access_token = :accessToken "),
+        @NamedQuery(name = "userAuthByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.access_token = :accessToken "),
         @NamedQuery(name = "userAuthTokenByUUID", query = "select ut from UserAuthTokenEntity ut where ut.uuid = :uuid "),
         @NamedQuery(name = "deleteById", query = "select ut from UserAuthTokenEntity ut where ut.id = :id ")
 
@@ -34,8 +38,8 @@ public class UserAuthTokenEntity {
 
     @Column(name = "UUID")
     String uuid;
-    @Column(name = "CUSTOMER_ID")
-    int user_id;
+//    @Column(name = "CUSTOMER_ID")
+//    int user_id;
     @Column(name = "ACCESS_TOKEN")
     String access_token;
     @Column(name = "EXPIRES_AT")
@@ -45,6 +49,19 @@ public class UserAuthTokenEntity {
     @Column(name = "LOGOUT_AT")
     ZonedDateTime logout_at;
 
+    @ManyToOne
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "customer_id")
+    private Customers customer;
+
+    public Customers getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
+    }
 
     public int getId() {
         return id;
@@ -62,13 +79,13 @@ public class UserAuthTokenEntity {
         this.uuid = uuid;
     }
 
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
+//    public int getUser_id() {
+//        return user_id;
+//    }
+//
+//    public void setUser_id(int user_id) {
+//        this.user_id = user_id;
+//    }
 
     public String getAccess_token() {
         return access_token;

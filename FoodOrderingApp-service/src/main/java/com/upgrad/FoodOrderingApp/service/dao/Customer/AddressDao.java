@@ -3,12 +3,15 @@ package com.upgrad.FoodOrderingApp.service.dao.Customer;
 
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
+import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
+import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -21,9 +24,9 @@ public class AddressDao {
     @Transactional
     public Address createAddress(Address address) {
 
-            entityManager.persist(address);
-            entityManager.flush();
-            System.out.println("ID!!!!!!!! PRIMARY KEY" + address.getId());
+        entityManager.persist(address);
+          //  entityManager.flush();
+          //  System.out.println("ID!!!!!!!! PRIMARY KEY" + address.getId());
 
         return address;
     }
@@ -74,5 +77,23 @@ public class AddressDao {
 
         return entityManager.createNamedQuery("getAllStates", StateEntity.class).getResultList();
 
+    }
+
+    /**
+     * This method fetches all the addresses added by the customer.
+     *
+     * @param customer whose detals to be fetched.
+     * @return List of CustomerAddress type object.
+     */
+    public List<CustomerAddress> customerAddressByCustomer(Customers customer) {
+        List<CustomerAddress> addresses =
+                entityManager
+                        .createNamedQuery("getCustomerAddressByCustomer", CustomerAddress.class)
+                        .setParameter("customer", customer)
+                        .getResultList();
+        if (addresses == null) {
+            return Collections.emptyList();
+        }
+        return addresses;
     }
 }

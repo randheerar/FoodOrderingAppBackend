@@ -2,8 +2,12 @@ package com.upgrad.FoodOrderingApp.service.entity.customer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,69 +43,63 @@ import java.util.Set;
 
 
 public class Address implements Serializable {
-   /* @OneToMany(targetEntity=CustomerAddress.class ,mappedBy = "address", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<CustomerAddress> customerAddresses=new HashSet<>();
-
-    public Set<CustomerAddress> getCustomerAddresses() {
-        return customerAddresses;
-    }
-
-    public void setCustomerAddresses(Set<CustomerAddress> customerAddresses) {
-        this.customerAddresses = customerAddresses;
-    }*/
-
-
-   /* @JoinTable
-    @ManyToMany
-    private List<Customers> customersList;
-
-*/
-
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(name = "uuid")
-    private String uuid="";
-
+    @Column(name = "uuid", unique = true)
+    @Size(max = 200)
+    @NotNull
+    private String uuid;
 
     @Column(name = "flat_buil_number")
-    private String flat_buil_number = "";
+    @Size(max = 255)
+    private String flat_buil_number;
 
     @Column(name = "locality")
-    private String locality = "";
+    @Size(max = 255)
+    private String locality;
 
     @Column(name = "city")
-    private String city = "";
+    @Size(max = 30)
+    private String city;
 
+    @Size(max = 30)
     @Column(name = "pincode")
-    private String pincode = "";
+    private String pincode;
 
-    @Column(name = "state_id")
-    private int stateUuid = 0;
-
-    @Column(name = "active")
-    private int active = 0;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "id")
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "state_id")
     private StateEntity state;
 
-    public StateEntity getState() {
-        return state;
-    }
+    @Column(name = "active")
+    private Integer active;
 
-    public void setState(StateEntity state) {
+    public Address() {}
+
+    public Address(
+            @Size(max = 200) @NotNull String uuid,
+            @Size(max = 255) String flatBuilNo,
+            @Size(max = 255) String locality,
+            @Size(max = 30) String city,
+            @Size(max = 30) String pincode,
+            StateEntity state) {
+        this.uuid = uuid;
+        this.flat_buil_number = flatBuilNo;
+        this.locality = locality;
+        this.city = city;
+        this.pincode = pincode;
         this.state = state;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -145,28 +143,21 @@ public class Address implements Serializable {
         this.pincode = pincode;
     }
 
+    public StateEntity getState() {
+        return state;
+    }
 
-    public int getActive() {
+    public void setState(StateEntity state) {
+        this.state = state;
+    }
+
+    public Integer getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(Integer active) {
         this.active = active;
     }
 
-    public int getStateUuid() {
-        return stateUuid;
-    }
 
-    public void setStateUuid(int stateUuid) {
-        this.stateUuid = stateUuid;
-    }
-
- /*   public List<Customers> getCustomersList() {
-        return customersList;
-    }
-
-    public void setCustomersList(List<Customers> customersList) {
-        this.customersList = customersList;
-    }*/
 }

@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.service.businness.customer;
 import com.upgrad.FoodOrderingApp.service.businness.JwtTokenProvider;
 import com.upgrad.FoodOrderingApp.service.businness.PasswordCryptographyProvider;
 import com.upgrad.FoodOrderingApp.service.dao.Customer.CustomerDao;
+import com.upgrad.FoodOrderingApp.service.dao.Customer.UserAuthTokenDao;
 import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerLoginRseponse;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
 import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
@@ -14,22 +15,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
+
     @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
+
     @Autowired
     PasswordCryptographyProvider passwordCryptographyProvider;
 
     @Autowired
     private CustomerDao customerDao;
+
+    @Autowired
+    private UserAuthTokenDao userAuthTokenDao;
 
     boolean isValid(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
@@ -40,14 +45,14 @@ public class CustomerService {
     public Customers signup(Customers customers) throws SignUpRestrictedException {
         String password = customers.getPassword();
 
-        if (customers.getContact_number().isEmpty() || customers.getEmail().isEmpty() || customers.getFirstname().isEmpty() || customers.getPassword().isEmpty()) {
+        if (customers.getContactNumber().isEmpty() || customers.getEmailAddress().isEmpty() || customers.getFirstName().isEmpty() || customers.getPassword().isEmpty()) {
             throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled.");
         }
 
-        if (!isValid(customers.getEmail()))
+        if (!isValid(customers.getEmailAddress()))
             throw new SignUpRestrictedException("SGR-002", "Invalid email-id format!");
 
-        if (!customers.getContact_number().matches("[0-9]+") || customers.getContact_number().length() != 10)
+        if (!customers.getContactNumber().matches("[0-9]+") || customers.getContactNumber().length() != 10)
             throw new SignUpRestrictedException("SGR-003", "Invalid contact number!)");
 
        /* if(!customers.getPassword().matches("((?=.*[a-z])(?=.*\\\\d)(?=.*[A-Z])(?=.*[#@$%&*!^]).{8,40})"))
@@ -59,7 +64,7 @@ public class CustomerService {
         customers.setSalt(encryptedText[0]);
         customers.setPassword(encryptedText[1]);
 
-        if (customerDao.getUserByPhone(customers.getContact_number()) != null) {
+        if (customerDao.getUserByPhone(customers.getContactNumber()) != null) {
             throw new SignUpRestrictedException("SGR-001", "This contact number is already registered! Try other contact number.");
         }
 
@@ -117,11 +122,10 @@ public class CustomerService {
             final ZonedDateTime expiresAt = now.plusHours(8);
             userAuthToken.setAccess_token(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
             userAuthToken.setLogin_at(now);
-            userAuthToken.setUser_id(userEntity.getId());
+            userAuthToken.setCustomer(userEntity);
             userAuthToken.setExpires_at(expiresAt);
             userAuthToken.setLogout_at(null);
-            userAuthToken.setUuid(userEntity.getUuid());
-            //
+            userAuthToken.setUuid(UUID.randomUUID().toString());
 
             try
             {
@@ -129,7 +133,6 @@ public class CustomerService {
                 if(userAuthTokenEntityInDb==null)
                 {
                     customerDao.createAuthToken(userAuthToken);
-
                 }
                 else
                 {
@@ -141,18 +144,16 @@ public class CustomerService {
                 e.printStackTrace();
             }
 
-
-
             userEntity.setUuid(userAuthToken.getUuid());
             // userEntity.setAccess_token(userAuthToken.getAccess_token());
             customerDao.updateUser(userEntity);
 
             CustomerLoginRseponse customerLoginRseponse=new CustomerLoginRseponse();
             customerLoginRseponse.setAccess_token(userAuthToken.getAccess_token());
-            customerLoginRseponse.setContactNumber(userEntity.getContact_number());
-            customerLoginRseponse.setEmailAddress(userEntity.getEmail());
-            customerLoginRseponse.setFirstName(userEntity.getFirstname());
-            customerLoginRseponse.setLastName(userEntity.getLastname());
+            customerLoginRseponse.setContactNumber(userEntity.getContactNumber());
+            customerLoginRseponse.setEmailAddress(userEntity.getEmailAddress());
+            customerLoginRseponse.setFirstName(userEntity.getFirstName());
+            customerLoginRseponse.setLastName(userEntity.getLastName());
             customerLoginRseponse.setId(userEntity.getId());
             customerLoginRseponse.setUUID(userEntity.getUuid());
 
@@ -169,10 +170,10 @@ public class CustomerService {
 
     public Customers edit(String accessToken, Customers customer) throws AuthorizationFailedException, UpdateCustomerException {
 
-        if (customer.getFirstname() == null)
+        if (customer.getFirstName() == null)
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
 
-        if (customer.getFirstname().isEmpty())
+        if (customer.getLastName().isEmpty())
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
 
         UserAuthTokenEntity userAuthTokenEntity = checkAccessToken(accessToken);
@@ -219,6 +220,18 @@ public class CustomerService {
 
         customerDao.updateUser(customers);
         return customers;
+    }
+
+    /**
+     * This method retrieves the Customer info
+     *
+     * @param uuid Takes access-token as input which is obtained during successful login.
+     * @return CustomerEntity - Customer who obtained this access-token during his login.
+     * @throws AuthorizationFailedException Based on token validity.
+     */
+    public Customers getCustomer(String uuid) throws AuthorizationFailedException {
+        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(uuid);
+        return userAuthTokenEntity.getCustomer();
     }
 
 }
