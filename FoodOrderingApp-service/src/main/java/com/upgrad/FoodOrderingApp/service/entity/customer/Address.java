@@ -161,11 +161,11 @@ public class Address implements Serializable {
         this.stateUuid = stateUuid;
     }
 
-    public List<Customers> getCustomersList() {
+ /*   public List<Customers> getCustomersList() {
         return customersList;
     }
 
     public void setCustomersList(List<Customers> customersList) {
         this.customersList = customersList;
-    }
+    }*/
 }
