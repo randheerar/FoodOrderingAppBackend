@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.entity.customer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -86,13 +87,13 @@ public class Address implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "id")
-    private State state;
+    private StateEntity state;
 
-    public State getState() {
+    public StateEntity getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(StateEntity state) {
         this.state = state;
     }
 
