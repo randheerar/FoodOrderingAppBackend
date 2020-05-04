@@ -4,9 +4,9 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.customer.AddressService;
 import com.upgrad.FoodOrderingApp.service.businness.customer.CustomerService;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
 import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
-import com.upgrad.FoodOrderingApp.service.entity.customer.State;
 import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -79,10 +79,10 @@ public class AddressController {
 
     @RequestMapping(method = RequestMethod.GET, path = "state", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<StatesList>> getStates()  {
-        List<State> addressLists = addressService.getStateList();
+        List<StateEntity> addressLists = addressService.getStateList();
         List<StatesList> statesList=new ArrayList<>();
 
-        for(State stateitem:addressLists)
+        for(StateEntity stateitem:addressLists)
         {
             StatesList state=new StatesList();
 
