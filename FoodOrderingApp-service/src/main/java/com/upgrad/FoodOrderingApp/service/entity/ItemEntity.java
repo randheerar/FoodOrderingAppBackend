@@ -14,6 +14,15 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "itemById", query = "select i from ItemEntity i where i.uuid = :itemId"),
         @NamedQuery(name = "itemByUUID", query = "select i from ItemEntity i where i.uuid = :uuid"),
+        @NamedQuery(
+                name = "getAllItemsInCategoryInRestaurant",
+                query =
+                        "select i from ItemEntity i  where id in (select ri.itemId from RestaurantItemEntity ri "
+                                + "inner join CategoryItemEntity ci on ri.itemId = ci.itemId "
+                                + "where ri.restaurantId = (select r.id from RestaurantEntity r where "
+                                + "r.uuid=:restaurantUuid) and ci.categoryId = "
+                                + "(select c.id from CategoryEntity c where c.uuid=:categoryUuid ) )"
+                                + "order by lower(i.itemName) asc")
 })
 
 public class ItemEntity implements Serializable {

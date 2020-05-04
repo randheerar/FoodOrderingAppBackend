@@ -8,6 +8,9 @@ import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,13 +24,23 @@ public class CategoryService {
     @Autowired
     private CategoryDao categoryDao;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+
     /**
      * returns categories of restaurant in alphabetical order.
      * @return takes restaurant uuid as input param and returns sorted categories alphabetically
      **/
-    public List<CategoryEntity> getCategoriesByRestaurant(String RestaurantUuid){
-        RestaurantEntity restaurantEntity = restaurantDao.restaurantByUUID(RestaurantUuid);
-        return restaurantEntity.getCategories().stream().sorted(Comparator.comparing(CategoryEntity::getCategoryName)).collect(Collectors.toList());
+    public List<CategoryEntity> getCategoriesByRestaurant(String restaurantUuid){
+        try {
+            return entityManager
+                    .createNamedQuery("getCategoriesByRestaurant", CategoryEntity.class)
+                    .setParameter("restaurantUuid", restaurantUuid)
+                    .getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
     }
 
     /**

@@ -49,4 +49,19 @@ public class ItemService {
 
         return sortedItemEntityList;
     }
+
+    /**
+     * This method gets Items for a given category in a restaurant
+     *
+     * @param resturantUuid Restaurant whose items are to be queried, categoryUuid Category to be
+     *     queried.
+     * @return List of ItemEntity
+     */
+    public List<ItemEntity> getItemsByCategoryAndRestaurant(
+            final String resturantUuid, final String categoryUuid) {
+
+        List<ItemEntity> itemsInEachCategoryInRestaurant =
+                itemDao.getAllItemsInCategoryInRestaurant(resturantUuid, categoryUuid);
+        return itemsInEachCategoryInRestaurant;
+    }
 }

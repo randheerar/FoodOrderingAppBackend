@@ -18,9 +18,8 @@ public class RestaurantDao {
      * queries DB to get all the restaurants from DB
      * @return Restaurant List
      **/
-    public List<RestaurantEntity> getAllRestaurantsByRating(){
-        List<RestaurantEntity> restaurantEntities = entityManager.createNamedQuery("getAllRestaurantsByRating", RestaurantEntity.class).getResultList();
-        return restaurantEntities;
+    public List<RestaurantEntity> getAllRestaurantsByRating() {
+        return entityManager.createNamedQuery("getAllRestaurantsByRating", RestaurantEntity.class).getResultList();
     }
 
     /**
@@ -43,5 +42,32 @@ public class RestaurantDao {
     public RestaurantEntity updateRestaurantEntity(RestaurantEntity restaurantEntity){
         entityManager.merge(restaurantEntity);
         return  restaurantEntity;
+    }
+
+    /**
+     * This method gets restaurants by Category
+     *
+     * @param categoryUuid
+     * @return List of restaurantEntity
+     */
+    public List<RestaurantEntity> restaurantByCategory(final String categoryUuid) {
+
+        return entityManager
+                .createNamedQuery("restaurantByCategory", RestaurantEntity.class)
+                .setParameter("categoryUuid", categoryUuid)
+                .getResultList();
+    }
+
+    /**
+     * This method gets lists of all restaurants by Search string
+     *
+     * @param searchString
+     * @return List of RestaurantEntity
+     */
+    public List<RestaurantEntity> restaurantsByName(final String searchString) {
+        return entityManager
+                .createNamedQuery("getRestaurantByName", RestaurantEntity.class)
+                .setParameter("searchString", "%" + searchString + "%")
+                .getResultList();
     }
 }
