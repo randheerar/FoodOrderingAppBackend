@@ -7,10 +7,10 @@ import java.io.Serializable;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "addressById", query = "select a from AddressEntity a where a.uuid = :addressId")
+        @NamedQuery(name = "addressesById", query = "select a from RestaurantAddressEntity a where a.uuid = :addressId")
 })
 @Table(name="address")
-public class AddressEntity implements Serializable {
+public class RestaurantAddressEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -96,17 +96,5 @@ public class AddressEntity implements Serializable {
 
     public void setActive(Integer active) {
         this.active = active;
-    }
-
-    public AddressEntity() {}
-
-    public AddressEntity(String uuid, String flatBuildNo, String locality, String city, String pincode, StateEntity stateEntity) {
-        this.uuid = uuid;
-        this.flatBuildingNumber = flatBuildNo;
-        this.locality = locality;
-        this.city = city;
-        this.pincode = pincode;
-        this.stateId = stateEntity;
-        this.active = 1;
     }
 }

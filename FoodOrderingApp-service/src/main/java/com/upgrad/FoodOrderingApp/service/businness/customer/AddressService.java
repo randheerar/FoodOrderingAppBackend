@@ -2,9 +2,9 @@ package com.upgrad.FoodOrderingApp.service.businness.customer;
 
 import com.upgrad.FoodOrderingApp.service.dao.Customer.AddressDao;
 import com.upgrad.FoodOrderingApp.service.dao.Customer.CustomerAdressDao;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
 import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
-import com.upgrad.FoodOrderingApp.service.entity.customer.State;
 import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -66,7 +66,7 @@ public class AddressService {
 
     }
 
-    public List<State> getStateList() {
+    public List<StateEntity> getStateList() {
 
 
         return   addressDao.getAllState();

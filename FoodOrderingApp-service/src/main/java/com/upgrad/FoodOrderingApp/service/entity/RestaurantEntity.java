@@ -54,7 +54,7 @@ public class RestaurantEntity implements Serializable {
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="address_id")
-    private AddressEntity address;
+    private RestaurantAddressEntity address;
 
     @ManyToMany
     @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
@@ -105,7 +105,7 @@ public class RestaurantEntity implements Serializable {
         this.numberOfCustomersRated = numberOfCustomersRated;
     }
 
-    public AddressEntity getAddress() {
+    public RestaurantAddressEntity getAddress() {
         return address;
     }
 
