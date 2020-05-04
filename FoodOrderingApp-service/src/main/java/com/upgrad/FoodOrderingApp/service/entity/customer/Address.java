@@ -50,6 +50,13 @@ public class Address implements Serializable {
     }*/
 
 
+   /* @JoinTable
+    @ManyToMany
+    private List<Customers> customersList;
+
+*/
+
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -77,6 +84,17 @@ public class Address implements Serializable {
     @Column(name = "active")
     private int active = 0;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id")
+    private State state;
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
 
     public int getId() {
         return id;
@@ -141,5 +159,13 @@ public class Address implements Serializable {
 
     public void setStateUuid(int stateUuid) {
         this.stateUuid = stateUuid;
+    }
+
+    public List<Customers> getCustomersList() {
+        return customersList;
+    }
+
+    public void setCustomersList(List<Customers> customersList) {
+        this.customersList = customersList;
     }
 }
