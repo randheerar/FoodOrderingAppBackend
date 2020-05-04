@@ -3,10 +3,9 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
-import com.upgrad.FoodOrderingApp.service.businness.customer.UserAdminBusinessService;
+import com.upgrad.FoodOrderingApp.service.businness.customer.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
-import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
@@ -33,7 +32,7 @@ public class RestaurantController {
     private CategoryService categoryService;
 
     @Autowired
-    private UserAdminBusinessService userAdminBusinessService;
+    CustomerService customerService;
 
     /**
      * retrieve all restaurants in order of their ratings
@@ -51,7 +50,7 @@ public class RestaurantController {
 
             RestaurantDetailsResponseAddressState addressState = new RestaurantDetailsResponseAddressState()
                     .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid())).
-                            stateName(restaurantEntity.getAddress().getState().getStateName());
+                            stateName(restaurantEntity.getAddress().getState().getState_name());
 
             RestaurantDetailsResponseAddress address = new RestaurantDetailsResponseAddress().
                     id(UUID.fromString(restaurantEntity.getAddress().getUuid())).
@@ -95,7 +94,7 @@ public class RestaurantController {
 
             RestaurantDetailsResponseAddressState responseAddressState = new RestaurantDetailsResponseAddressState()
                     .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid())).
-                            stateName(restaurantEntity.getAddress().getState().getStateName());
+                            stateName(restaurantEntity.getAddress().getState().getState_name());
 
             RestaurantDetailsResponseAddress responseAddress = new RestaurantDetailsResponseAddress().
                     id(UUID.fromString(restaurantEntity.getAddress().getUuid())).
@@ -138,7 +137,7 @@ public class RestaurantController {
         for (RestaurantEntity restaurantEntity : restaurantListByCategoryId) {
             RestaurantDetailsResponseAddressState state = new RestaurantDetailsResponseAddressState()
                     .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid())).
-                            stateName(restaurantEntity.getAddress().getState().getStateName());
+                            stateName(restaurantEntity.getAddress().getState().getState_name());
 
             RestaurantDetailsResponseAddress responseAddress = new RestaurantDetailsResponseAddress().
                     id(UUID.fromString(restaurantEntity.getAddress().getUuid())).
@@ -175,7 +174,7 @@ public class RestaurantController {
 
         RestaurantDetailsResponseAddressState state = new RestaurantDetailsResponseAddressState()
                 .id(UUID.fromString(restaurantByRestaurantId.getAddress().getState().getUuid())).
-                        stateName(restaurantByRestaurantId.getAddress().getState().getStateName());
+                        stateName(restaurantByRestaurantId.getAddress().getState().getState_name());
 
         RestaurantDetailsResponseAddress responseAddress = new RestaurantDetailsResponseAddress().
                 id(UUID.fromString(restaurantByRestaurantId.getAddress().getUuid())).
@@ -218,7 +217,7 @@ public class RestaurantController {
             @RequestHeader("access_token") final String accessToken)
             throws RestaurantNotFoundException, AuthorizationFailedException, InvalidRatingException {
 
-        userAdminBusinessService.checkAccessToken(accessToken);
+        customerService.checkAccessToken(accessToken);
 
 
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);

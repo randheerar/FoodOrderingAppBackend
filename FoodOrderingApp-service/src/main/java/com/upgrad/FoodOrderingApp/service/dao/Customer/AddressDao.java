@@ -1,11 +1,8 @@
 package com.upgrad.FoodOrderingApp.service.dao.Customer;
 
 
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
-import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
-import com.upgrad.FoodOrderingApp.service.entity.customer.State;
-import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,9 +70,9 @@ public class AddressDao {
     }
 
 
-    public List<State> getAllState() {
+    public List<StateEntity> getAllState() {
 
-        return entityManager.createNamedQuery("getAllStates", State.class).getResultList();
+        return entityManager.createNamedQuery("getAllStates", StateEntity.class).getResultList();
 
     }
 }

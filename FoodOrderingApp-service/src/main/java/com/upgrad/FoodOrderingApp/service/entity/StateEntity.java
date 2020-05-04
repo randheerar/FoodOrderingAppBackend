@@ -4,8 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NamedQueries({
@@ -20,7 +18,7 @@ public class StateEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     @Column(name="id")
-    private Integer id;
+    private int id;
 
     @Column(name="uuid")
     @Size(max=200)
@@ -30,13 +28,13 @@ public class StateEntity implements Serializable {
     @Column(name="state_name")
     @Size(max=30)
     @NotNull
-    private String stateName;
+    private String state_name;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -48,9 +46,7 @@ public class StateEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getStateName() {
-        return stateName;
+    public String getState_name() {
+        return state_name;
     }
-
-    public StateEntity() {}
 }
