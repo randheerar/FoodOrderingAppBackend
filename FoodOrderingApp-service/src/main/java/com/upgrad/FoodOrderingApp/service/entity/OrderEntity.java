@@ -56,6 +56,10 @@ public class OrderEntity implements Serializable {
     @Column(name = "bill")
     private Double bill;
 
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private CouponEntity coupon;
+
     @NotNull
     @Column(name = "discount")
     private Double discount;
@@ -63,6 +67,10 @@ public class OrderEntity implements Serializable {
     @NotNull
     @Column(name = "date")
     private ZonedDateTime date;
+
+    @ManyToOne
+    @JoinColumn(name = "payment_id")
+    private PaymentEntity payment;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -86,15 +94,19 @@ public class OrderEntity implements Serializable {
     public OrderEntity(
             @NotNull @Size(max = 200) String uuid,
             @NotNull Double bill,
+            CouponEntity coupon,
             @NotNull Double discount,
             @NotNull Date date,
+            PaymentEntity payment,
             CustomerEntity customerEntity,
             AddressEntity address,
             RestaurantEntity restaurant) {
         this.uuid = uuid;
         this.bill = bill;
+        this.coupon = coupon;
         this.discount = discount;
         this.date = date.toInstant().atZone(ZoneId.systemDefault());
+        this.payment = payment;
         this.customer = customerEntity;
         this.address = address;
         this.restaurant = restaurant;
@@ -124,6 +136,14 @@ public class OrderEntity implements Serializable {
         this.bill = bill;
     }
 
+    public CouponEntity getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(CouponEntity coupon) {
+        this.coupon = coupon;
+    }
+
     public Double getDiscount() {
         return discount;
     }
@@ -138,6 +158,14 @@ public class OrderEntity implements Serializable {
 
     public void setDate(ZonedDateTime date) {
         this.date = date;
+    }
+
+    public PaymentEntity getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentEntity payment) {
+        this.payment = payment;
     }
 
     public CustomerEntity getCustomer() {

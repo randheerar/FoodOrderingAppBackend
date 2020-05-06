@@ -106,6 +106,33 @@ public class AddressService {
         return stateDao.findStateByUUID(stateUuid);
     }
 
+    /**
+     * This method implements logic for getting the Address using address uuid.
+     *
+     * @param addressId Address UUID.
+     * @param customerEntity Customer whose addresses has to be fetched.
+     * @return AddressEntity object.
+     * @throws AddressNotFoundException If any validation on address fails.
+     * @throws AuthorizationFailedException If any validation on customer fails.
+     */
+    public AddressEntity getAddressByUUID(final String addressId, final CustomerEntity customerEntity)
+            throws AuthorizationFailedException, AddressNotFoundException {
+        AddressEntity addressEntity = addressDao.getAddressByUUID(addressId);
+        if (addressId.isEmpty()) {
+            throw new AddressNotFoundException("ANF-005", "Address id can not be empty");
+        }
+        if (addressEntity == null) {
+            throw new AddressNotFoundException("ANF-003", "No address by this id");
+        }
+        CustomerAddressEntity customerAddressEntity =
+                customerAdressDao.customerAddressByAddress(addressEntity);
+        if (!customerAddressEntity.getCustomer().getUuid().equals(customerEntity.getUuid())) {
+            throw new AuthorizationFailedException(
+                    "ATHR-004", "You are not authorized to view/update/delete any one else's address");
+        }
+        return addressEntity;
+    }
+
     // checks if the pincode entered is invalid (i.e it does not include only numbers or its size is not six)
     private boolean isPincodeValid(final String pincode) {
         if (pincode.length() != 6) {

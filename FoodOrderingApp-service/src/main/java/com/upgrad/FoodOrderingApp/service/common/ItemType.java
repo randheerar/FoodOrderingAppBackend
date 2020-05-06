@@ -1,22 +1,31 @@
 package com.upgrad.FoodOrderingApp.service.common;
 
-public enum ItemType {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-    VEG("VEG"),
-    NON_VEG("NON_VEG");
+public enum ItemType {
+    VEG("0"),
+    NON_VEG("1");
 
     private String value;
 
-    private ItemType(String value) {
+    ItemType(String value) {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
+    @JsonValue
     @Override
     public String toString() {
-        return getValue();
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static ItemType fromValue(String text) {
+        for (ItemType b : ItemType.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
     }
 }
