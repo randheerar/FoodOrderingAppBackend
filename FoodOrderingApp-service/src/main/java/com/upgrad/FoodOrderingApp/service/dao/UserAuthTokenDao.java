@@ -1,6 +1,7 @@
-package com.upgrad.FoodOrderingApp.service.dao.Customer;
+package com.upgrad.FoodOrderingApp.service.dao;
 
-import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerLoginRseponse;
+import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

@@ -1,10 +1,10 @@
-package com.upgrad.FoodOrderingApp.service.dao.Customer;
+package com.upgrad.FoodOrderingApp.service.dao;
 
 
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
-import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +22,7 @@ public class AddressDao {
     private EntityManager entityManager;
 
     @Transactional
-    public Address createAddress(Address address) {
+    public AddressEntity createAddress(AddressEntity address) {
 
         entityManager.persist(address);
           //  entityManager.flush();
@@ -32,20 +32,20 @@ public class AddressDao {
     }
 
     @Transactional
-    public List<Address> getAddress(int customer_id)
+    public List<AddressEntity> getAddress(int customer_id)
     {
 
-        List<Address> addressList=new ArrayList<>();
-        addressList= entityManager.createNamedQuery("getaddress", Address.class).getResultList();
+        List<AddressEntity> addressList=new ArrayList<>();
+        addressList= entityManager.createNamedQuery("getaddress", AddressEntity.class).getResultList();
 
         return addressList;
     }
 
     @Transactional
-    public Address getAddressByUUID(String uuid)
+    public AddressEntity getAddressByUUID(String uuid)
     {
         try {
-            return entityManager.createNamedQuery("getAddressByUUID", Address.class).setParameter("uuid", uuid).getSingleResult();
+            return entityManager.createNamedQuery("getAddressByUUID", AddressEntity.class).setParameter("uuid", uuid).getSingleResult();
         }catch (Exception e)
         {
             return null;
@@ -59,7 +59,7 @@ public class AddressDao {
     public String delete(String id)
     {
         try {
-            entityManager.createNamedQuery("deleteAddressById", Address.class)
+            entityManager.createNamedQuery("deleteAddressById", AddressEntity.class)
                     .setParameter(1, id)
                     .executeUpdate();
 
@@ -85,10 +85,10 @@ public class AddressDao {
      * @param customer whose detals to be fetched.
      * @return List of CustomerAddress type object.
      */
-    public List<CustomerAddress> customerAddressByCustomer(Customers customer) {
-        List<CustomerAddress> addresses =
+    public List<CustomerAddressEntity> customerAddressByCustomer(CustomerEntity customer) {
+        List<CustomerAddressEntity> addresses =
                 entityManager
-                        .createNamedQuery("getCustomerAddressByCustomer", CustomerAddress.class)
+                        .createNamedQuery("getCustomerAddressByCustomer", CustomerAddressEntity.class)
                         .setParameter("customer", customer)
                         .getResultList();
         if (addresses == null) {

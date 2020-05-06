@@ -1,6 +1,12 @@
-package com.upgrad.FoodOrderingApp.service.entity.customer;
+package com.upgrad.FoodOrderingApp.service.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 public class CustomerLoginRseponse {
     @JsonProperty("id")
@@ -82,11 +88,11 @@ public class CustomerLoginRseponse {
         this.contactNumber = contactNumber;
     }
 
-    public String getAccess_token() {
+    public String getAccessToken() {
         return access_token;
     }
 
-    public void setAccess_token(String access_token) {
+    public void setAccessToken(String access_token) {
         this.access_token = access_token;
     }
 }

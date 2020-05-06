@@ -1,7 +1,6 @@
-package com.upgrad.FoodOrderingApp.service.entity.customer;
+package com.upgrad.FoodOrderingApp.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,11 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 
 @Entity
 @Table(name = "address")
@@ -33,16 +27,16 @@ import java.util.Set;
 @NamedQueries(
         {
 
-                @NamedQuery(name = "addressById", query = "select u from Address u where u.id =:id"),
-                @NamedQuery(name = "getaddress", query = "select u from Address u"),
-                @NamedQuery(name = "getAddressByUUID", query = "select u from Address u where u.uuid=:uuid"),
+                @NamedQuery(name = "addressById", query = "select u from AddressEntity u where u.id =:id"),
+                @NamedQuery(name = "getaddress", query = "select u from AddressEntity u"),
+                @NamedQuery(name = "getAddressByUUID", query = "select u from AddressEntity u where u.uuid=:uuid"),
 
 
         }
 )
 
 
-public class Address implements Serializable {
+public class AddressEntity implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -78,9 +72,9 @@ public class Address implements Serializable {
     @Column(name = "active")
     private Integer active;
 
-    public Address() {}
+    public AddressEntity() {}
 
-    public Address(
+    public AddressEntity(
             @Size(max = 200) @NotNull String uuid,
             @Size(max = 255) String flatBuilNo,
             @Size(max = 255) String locality,

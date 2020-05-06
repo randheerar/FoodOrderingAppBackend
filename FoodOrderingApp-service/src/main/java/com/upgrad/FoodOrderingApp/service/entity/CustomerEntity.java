@@ -1,13 +1,11 @@
-package com.upgrad.FoodOrderingApp.service.entity.customer;
+package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "customer")
@@ -26,15 +24,15 @@ import java.util.Set;
 })
 @NamedQueries(
         {
-                @NamedQuery(name = "userByUuid", query = "select u from Customers u where u.uuid = :uuid"),
-                @NamedQuery(name = "userByEmail", query = "select u from Customers u where u.email =:email"),
-                @NamedQuery(name = "userByPhone", query = "select u from Customers u where u.contact_number =:contact_number"),
-                @NamedQuery(name = "userById", query = "select u from Customers u where u.id =:id"),
+                @NamedQuery(name = "userByUuid", query = "select u from CustomerEntity u where u.uuid = :uuid"),
+                @NamedQuery(name = "userByEmail", query = "select u from CustomerEntity u where u.email =:email"),
+                @NamedQuery(name = "userByPhone", query = "select u from CustomerEntity u where u.contact_number =:contact_number"),
+                @NamedQuery(name = "userById", query = "select u from CustomerEntity u where u.id =:id"),
 
 
         }
 )
-public class Customers implements Serializable {
+public class CustomerEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,7 +77,7 @@ public class Customers implements Serializable {
             name = "customer_address",
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private List<Address> addresses = new ArrayList<>();
+    private List<AddressEntity> address = new ArrayList<>();
 
     public String getFirstName() {
         return firstName;
@@ -145,11 +143,11 @@ public class Customers implements Serializable {
         this.salt = salt;
     }
 
-    public List<Address> getAddresses() {
-        return addresses;
+    public List<AddressEntity> getAddress() {
+        return address;
     }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
+    public void setAddress(List<AddressEntity> address) {
+        this.address = address;
     }
 }

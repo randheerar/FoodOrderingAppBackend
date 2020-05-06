@@ -2,12 +2,12 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.customer.AddressService;
-import com.upgrad.FoodOrderingApp.service.businness.customer.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.AddressService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
-import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
@@ -42,9 +42,9 @@ public class AddressController {
 
         UserAuthTokenEntity userAuthTokenEntity = customerService.checkAccessToken(accessToken);
 
-        Customers customerEntity = customerService.getCustomer(userAuthTokenEntity.getUuid());
+        CustomerEntity customerEntity = customerService.getCustomer(userAuthTokenEntity.getUuid());
 
-        final Address addressEntity = new Address();
+        final AddressEntity addressEntity = new AddressEntity();
         if (saveAddressRequest != null) {
             addressEntity.setUuid(UUID.randomUUID().toString());
             addressEntity.setCity(saveAddressRequest.getCity());
@@ -55,7 +55,7 @@ public class AddressController {
         }
         addressEntity.setState(addressService.getStateByUUID(saveAddressRequest.getStateUuid()));
 
-        final Address savedAddress = addressService.saveAddress(addressEntity, customerEntity);
+        final AddressEntity savedAddress = addressService.saveAddress(addressEntity, customerEntity);
         SaveAddressResponse saveAddressResponse =
                 new SaveAddressResponse()
                         .id(savedAddress.getUuid())
@@ -72,13 +72,13 @@ public class AddressController {
             throws AuthorizationFailedException {
 
         UserAuthTokenEntity userAuthTokenEntity = customerService.checkAccessToken(accessToken);
-        Customers customerEntity = customerService.getCustomer(userAuthTokenEntity.getUuid());
+        CustomerEntity customerEntity = customerService.getCustomer(userAuthTokenEntity.getUuid());
 
-        List<Address> addressEntityList = addressService.getAddressList(customerEntity);
+        List<AddressEntity> addressEntityList = addressService.getAddressList(customerEntity);
         final AddressListResponse addressListResponse = new AddressListResponse();
 
         if (!addressEntityList.isEmpty()) {
-            for (Address addressEntity : addressEntityList) {
+            for (AddressEntity addressEntity : addressEntityList) {
                 AddressList addressResponseList =
                         new AddressList()
                                 .id(UUID.fromString(addressEntity.getUuid()))

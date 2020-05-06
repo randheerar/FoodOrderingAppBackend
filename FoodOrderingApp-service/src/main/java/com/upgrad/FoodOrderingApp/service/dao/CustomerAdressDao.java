@@ -1,8 +1,7 @@
-package com.upgrad.FoodOrderingApp.service.dao.Customer;
+package com.upgrad.FoodOrderingApp.service.dao;
 
-
-import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
-import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,7 @@ public class CustomerAdressDao {
 
 
     @Transactional
-    public CustomerAddress createCustomerAddressRelation(CustomerAddress customerAddress) {
+    public CustomerAddressEntity createCustomerAddressRelation(CustomerAddressEntity customerAddress) {
 
         entityManager.persist(customerAddress);
         entityManager.flush();
@@ -34,7 +33,7 @@ public class CustomerAdressDao {
      * @param customerAddressEntity Customer and the address to map.
      * @return CustomerAddressEntity object.
      */
-    public void createCustomerAddress(final CustomerAddress customerAddressEntity) {
+    public void createCustomerAddress(final CustomerAddressEntity customerAddressEntity) {
         entityManager.persist(customerAddressEntity);
     }
 
@@ -44,10 +43,10 @@ public class CustomerAdressDao {
      * @param address address to fetch.
      * @return CustomerAddressEntity type object.
      */
-    public CustomerAddress customerAddressByAddress(final Address address) {
+    public CustomerAddressEntity customerAddressByAddress(final AddressEntity address) {
         try {
             return entityManager
-                    .createNamedQuery("getCustomerAddressByAddress", CustomerAddress.class)
+                    .createNamedQuery("getCustomerAddressByAddress", CustomerAddressEntity.class)
                     .setParameter("address", address)
                     .getSingleResult();
         } catch (NoResultException nre) {

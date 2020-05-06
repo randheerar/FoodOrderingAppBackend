@@ -1,13 +1,12 @@
-package com.upgrad.FoodOrderingApp.service.businness.customer;
+package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.dao.Customer.AddressDao;
-import com.upgrad.FoodOrderingApp.service.dao.Customer.CustomerAdressDao;
+import com.upgrad.FoodOrderingApp.service.dao.AddressDao;
+import com.upgrad.FoodOrderingApp.service.dao.CustomerAdressDao;
 import com.upgrad.FoodOrderingApp.service.dao.StateDao;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
-import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerAddress;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
-import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
@@ -30,9 +29,9 @@ public class AddressService {
     private StateDao stateDao;
 
 
-    public List<Address> getAddressList(Customers customerEntity) {
-        List<Address> addressEntityList = new ArrayList<>();
-        List<CustomerAddress> customerAddressEntityList =
+    public List<AddressEntity> getAddressList(CustomerEntity customerEntity) {
+        List<AddressEntity> addressEntityList = new ArrayList<>();
+        List<CustomerAddressEntity> customerAddressEntityList =
                 addressDao.customerAddressByCustomer(customerEntity);
         if (customerAddressEntityList != null || !customerAddressEntityList.isEmpty()) {
             customerAddressEntityList.forEach(
@@ -41,7 +40,7 @@ public class AddressService {
         return addressEntityList;
     }
 
-    public Address saveAddress(Address address, Customers customer) throws SaveAddressException {
+    public AddressEntity saveAddress(AddressEntity address, CustomerEntity customer) throws SaveAddressException {
 
         if (address.getActive() != null
                 && address.getLocality() != null
@@ -57,9 +56,9 @@ public class AddressService {
                 throw new SaveAddressException("SAR-002", "Invalid pincode");
             }
 
-            Address addAddress = addressDao.createAddress(address);
+            AddressEntity addAddress = addressDao.createAddress(address);
 
-            CustomerAddress createdCustomerAddressEntity = new CustomerAddress();
+            CustomerAddressEntity createdCustomerAddressEntity = new CustomerAddressEntity();
             createdCustomerAddressEntity.setCustomer(customer);
             createdCustomerAddressEntity.setAddress(addAddress);
             customerAdressDao.createCustomerAddress(createdCustomerAddressEntity);
@@ -69,7 +68,7 @@ public class AddressService {
         }
     }
 
-    public CustomerAddress saveCustomerAddressRelation(CustomerAddress customerAddress) throws AuthorizationFailedException, AddressNotFoundException {
+    public CustomerAddressEntity saveCustomerAddressRelation(CustomerAddressEntity customerAddress) throws AuthorizationFailedException, AddressNotFoundException {
 
 
         return customerAdressDao.createCustomerAddressRelation(customerAddress);

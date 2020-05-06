@@ -1,7 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -46,7 +44,7 @@ public class OrderEntity implements Serializable {
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="customer_id")
-    private Customers customer;
+    private CustomerEntity customer;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="address_id")
@@ -107,11 +105,11 @@ public class OrderEntity implements Serializable {
         this.date = date;
     }
 
-    public Customers getCustomer() {
+    public CustomerEntity getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customers customer) {
+    public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
     }
 

@@ -4,11 +4,11 @@ import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.ItemService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
-import com.upgrad.FoodOrderingApp.service.businness.customer.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
@@ -224,12 +224,12 @@ public class RestaurantController {
     /* Creates RestaurantDetailsResponseAddress */
 
     private RestaurantDetailsResponseAddress createRestaurantDetailsResponseAddress(
-            Address restaurantAddress) {
+            AddressEntity restaurantAddress) {
         RestaurantDetailsResponseAddress restaurantDetailsResponseAddress =
                 new RestaurantDetailsResponseAddress();
         RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState =
                 new RestaurantDetailsResponseAddressState();
-        Address addressEntity = restaurantAddress;
+        AddressEntity addressEntity = restaurantAddress;
         restaurantDetailsResponseAddress.setId(UUID.fromString(addressEntity.getUuid()));
         restaurantDetailsResponseAddress.setFlatBuildingName(addressEntity.getFlat_buil_number());
         restaurantDetailsResponseAddress.setCity(addressEntity.getCity());

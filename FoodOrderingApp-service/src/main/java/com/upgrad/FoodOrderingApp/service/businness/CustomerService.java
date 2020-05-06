@@ -1,12 +1,10 @@
-package com.upgrad.FoodOrderingApp.service.businness.customer;
+package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.businness.JwtTokenProvider;
-import com.upgrad.FoodOrderingApp.service.businness.PasswordCryptographyProvider;
-import com.upgrad.FoodOrderingApp.service.dao.Customer.CustomerDao;
-import com.upgrad.FoodOrderingApp.service.dao.Customer.UserAuthTokenDao;
-import com.upgrad.FoodOrderingApp.service.entity.customer.CustomerLoginRseponse;
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
-import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
+import com.upgrad.FoodOrderingApp.service.dao.UserAuthTokenDao;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerLoginRseponse;
+import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
@@ -14,6 +12,7 @@ import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
@@ -42,7 +41,7 @@ public class CustomerService {
     }
 
     @Transactional(noRollbackFor = {TransactionException.class})
-    public Customers signup(Customers customers) throws SignUpRestrictedException {
+    public CustomerEntity saveCustomer(CustomerEntity customers) throws SignUpRestrictedException {
         String password = customers.getPassword();
 
         if (customers.getContactNumber().isEmpty() || customers.getEmailAddress().isEmpty() || customers.getFirstName().isEmpty() || customers.getPassword().isEmpty()) {
@@ -108,7 +107,7 @@ public class CustomerService {
     }
     @Transactional(noRollbackFor = {TransactionException.class})
     public CustomerLoginRseponse authenticate(final String phone, final String password) throws AuthenticationFailedException {
-        Customers userEntity = customerDao.getUserByPhone(phone);
+        CustomerEntity userEntity = customerDao.getUserByPhone(phone);
 
         if(userEntity == null){
             throw new AuthenticationFailedException("ATH-001", "This contact number has not been registered!");
@@ -120,7 +119,7 @@ public class CustomerService {
             UserAuthTokenEntity userAuthToken = new UserAuthTokenEntity();
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
-            userAuthToken.setAccess_token(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
+            userAuthToken.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
             userAuthToken.setLogin_at(now);
             userAuthToken.setCustomer(userEntity);
             userAuthToken.setExpires_at(expiresAt);
@@ -149,7 +148,7 @@ public class CustomerService {
             customerDao.updateUser(userEntity);
 
             CustomerLoginRseponse customerLoginRseponse=new CustomerLoginRseponse();
-            customerLoginRseponse.setAccess_token(userAuthToken.getAccess_token());
+            customerLoginRseponse.setAccessToken(userAuthToken.getAccessToken());
             customerLoginRseponse.setContactNumber(userEntity.getContactNumber());
             customerLoginRseponse.setEmailAddress(userEntity.getEmailAddress());
             customerLoginRseponse.setFirstName(userEntity.getFirstName());
@@ -168,7 +167,7 @@ public class CustomerService {
     }
     @Transactional(noRollbackFor = {TransactionException.class})
 
-    public Customers edit(String accessToken, Customers customer) throws AuthorizationFailedException, UpdateCustomerException {
+    public CustomerEntity edit(String accessToken, CustomerEntity customer) throws AuthorizationFailedException, UpdateCustomerException {
 
         if (customer.getFirstName() == null)
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
@@ -189,20 +188,20 @@ public class CustomerService {
     }
 
    /* @Transactional
-    public Customers signupCustomer(Customers users) throws SignUpRestrictedException {
+    public CustomerEntity signupCustomer(CustomerEntity users) throws SignUpRestrictedException {
         return signup(users);
 
     }*/
    @Transactional(noRollbackFor = {TransactionException.class})
 
-    public Customers updatePassword(String accessToken, String oldPassword, String newPassword) throws UpdateCustomerException, AuthorizationFailedException {
+    public CustomerEntity updateCustomerPassword(String accessToken, String oldPassword, String newPassword) throws UpdateCustomerException, AuthorizationFailedException {
 
         if (oldPassword.isEmpty() || newPassword.isEmpty())
             throw new UpdateCustomerException("UCR-003", "No field should be empty");
 
 
         UserAuthTokenEntity userAuthTokenEntity = checkAccessToken(accessToken);
-        Customers customers = customerDao.getCustomerByUUID(userAuthTokenEntity.getUuid());
+        CustomerEntity customers = customerDao.getCustomerByUUID(userAuthTokenEntity.getUuid());
 
 
         final String encryptedPassword_old = passwordCryptographyProvider.encrypt(oldPassword, customers.getSalt());
@@ -229,10 +228,27 @@ public class CustomerService {
      * @return CustomerEntity - Customer who obtained this access-token during his login.
      * @throws AuthorizationFailedException Based on token validity.
      */
-    public Customers getCustomer(String uuid) throws AuthorizationFailedException {
+    public CustomerEntity getCustomer(String uuid) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(uuid);
         return userAuthTokenEntity.getCustomer();
     }
+
+    /**
+     * This method implements the logic for 'logout' endpoint.
+     *
+     * @param accessToken Customers access token in 'Bearer <access-token>' format.
+     * @return Updated CustomerAuthEntity object.
+     * @throws AuthorizationFailedException if any of the validation fails on customer authorization.
+     */
+//    @Transactional(propagation = Propagation.REQUIRED)
+//    public CustomerLoginRseponse logout(final String accessToken) throws AuthorizationFailedException {
+//        CustomerLoginRseponse customerAuthEntity = userAuthTokenDao.getCustomerAuthByToken(accessToken);
+//        CustomerEntity customerEntity = getCustomer(accessToken);
+//        customerAuthEntity.setCustomer(customerEntity);
+//        customerAuthEntity.setLogoutAt(ZonedDateTime.now());
+//        customerAuthDao.updateCustomerAuth(customerAuthEntity);
+//        return customerAuthEntity;
+//    }
 
 }
 

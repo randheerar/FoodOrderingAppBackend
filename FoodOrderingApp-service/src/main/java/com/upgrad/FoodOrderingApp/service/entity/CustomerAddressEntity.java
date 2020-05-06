@@ -1,4 +1,4 @@
-package com.upgrad.FoodOrderingApp.service.entity.customer;
+package com.upgrad.FoodOrderingApp.service.entity;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -21,15 +21,15 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(
                 name = "getCustomerAddressByCustomer",
-                query = "select ca FROM CustomerAddress ca where ca.customer = :customer"),
+                query = "select ca FROM CustomerAddressEntity ca where ca.customer = :customer"),
         @NamedQuery(
                 name = "getCustomerAddressByAddress",
-                query = "select ca from CustomerAddress ca where ca.address = :address")
+                query = "select ca from CustomerAddressEntity ca where ca.address = :address")
 })
 
 
 
-public class CustomerAddress implements Serializable {
+public class CustomerAddressEntity implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -40,13 +40,13 @@ public class CustomerAddress implements Serializable {
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "customer_id")
-    private Customers customer;
+    private CustomerEntity customer;
 
     @ManyToOne
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "address_id")
-    private Address address;
+    private AddressEntity address;
 
     public Integer getId() {
         return id;
@@ -56,19 +56,19 @@ public class CustomerAddress implements Serializable {
         this.id = id;
     }
 
-    public Customers getCustomer() {
+    public CustomerEntity getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customers customer) {
+    public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
     }
 
-    public Address getAddress() {
+    public AddressEntity getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressEntity address) {
         this.address = address;
     }
 }

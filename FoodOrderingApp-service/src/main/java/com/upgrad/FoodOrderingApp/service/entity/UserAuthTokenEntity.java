@@ -1,4 +1,4 @@
-package com.upgrad.FoodOrderingApp.service.entity.customer;
+package com.upgrad.FoodOrderingApp.service.entity;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -53,13 +53,13 @@ public class UserAuthTokenEntity {
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "customer_id")
-    private Customers customer;
+    private CustomerEntity customer;
 
-    public Customers getCustomer() {
+    public CustomerEntity getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customers customer) {
+    public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
     }
 
@@ -87,11 +87,11 @@ public class UserAuthTokenEntity {
 //        this.user_id = user_id;
 //    }
 
-    public String getAccess_token() {
+    public String getAccessToken() {
         return access_token;
     }
 
-    public void setAccess_token(String access_token) {
+    public void setAccessToken(String access_token) {
         this.access_token = access_token;
     }
 

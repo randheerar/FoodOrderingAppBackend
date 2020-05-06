@@ -1,16 +1,10 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 
-import com.upgrad.FoodOrderingApp.service.entity.customer.Address;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name="restaurant")
@@ -74,7 +68,7 @@ public class RestaurantEntity implements Serializable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "address_id")
-    private Address address;
+    private AddressEntity  address;
 
     public Integer getId() {
         return id;
@@ -132,11 +126,11 @@ public class RestaurantEntity implements Serializable {
         this.numberCustomersRated = numberOfCustomersRated;
     }
 
-    public Address getAddress() {
+    public AddressEntity getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressEntity address) {
         this.address = address;
     }
 }

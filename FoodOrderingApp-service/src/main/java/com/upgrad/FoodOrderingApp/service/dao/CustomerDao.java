@@ -1,8 +1,8 @@
-package com.upgrad.FoodOrderingApp.service.dao.Customer;
+package com.upgrad.FoodOrderingApp.service.dao;
 
 
-import com.upgrad.FoodOrderingApp.service.entity.customer.Customers;
-import com.upgrad.FoodOrderingApp.service.entity.customer.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +19,15 @@ public class CustomerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Customers createCustomer(Customers users) {
+    public CustomerEntity createCustomer(CustomerEntity users) {
         entityManager.persist(users);
         return users;
     }
 
-    public Customers getUserByPhone(final String phoneNumber) {
+    public CustomerEntity getUserByPhone(final String phoneNumber) {
 
         try {
-            return entityManager.createNamedQuery("userByPhone", Customers.class).setParameter("contact_number", phoneNumber).getSingleResult();
+            return entityManager.createNamedQuery("userByPhone", CustomerEntity.class).setParameter("contact_number", phoneNumber).getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -56,11 +56,11 @@ public class CustomerDao {
         }
     }
 
-    public Customers getCustomerByUUID(String UUID)
+    public CustomerEntity getCustomerByUUID(String UUID)
     {
 
         try {
-            return entityManager.createNamedQuery("userByUuid", Customers.class).setParameter("uuid", UUID).getSingleResult();
+            return entityManager.createNamedQuery("userByUuid", CustomerEntity.class).setParameter("uuid", UUID).getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -82,14 +82,14 @@ public class CustomerDao {
     public UserAuthTokenEntity checkAuthToken(final String accessToken) {
 
         try {
-            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+            return entityManager.createNamedQuery("userAuthByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
         } catch (Exception e) {
             return null;
         }
     }
 
     @Transactional
-    public void updateUser(final Customers customer) {
+    public void updateUser(final CustomerEntity customer) {
         entityManager.merge(customer);
     }
 
@@ -101,12 +101,12 @@ public class CustomerDao {
     }
 
     @Transactional
-    public Customers  editCustomer(Customers customers)
+    public CustomerEntity  editCustomer(CustomerEntity customers)
     {
         try {
-/*             entityManager.createNamedQuery("editById", Customers.class).setParameter("firstname", customers.getFirstname()).setParameter("lastname", customers.getLastname()).setParameter("uuid", customers.getUuid())
+/*             entityManager.createNamedQuery("editById", CustomerEntity.class).setParameter("firstname", customers.getFirstname()).setParameter("lastname", customers.getLastname()).setParameter("uuid", customers.getUuid())
               .executeUpdate();*/
-            entityManager.createNamedQuery("editById", Customers.class)
+            entityManager.createNamedQuery("editById", CustomerEntity.class)
                     .setParameter(1, customers.getFirstName())
                     .setParameter(2, customers.getLastName())
                     .setParameter(3, customers.getUuid())
