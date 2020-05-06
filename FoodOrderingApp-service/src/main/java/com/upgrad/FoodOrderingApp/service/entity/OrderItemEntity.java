@@ -1,38 +1,59 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import javax.persistence.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
-@Table(name="order_item")
-@NamedQueries({
-        @NamedQuery(name = "itemsByOrder", query = "select q from OrderItemEntity q where q.orderId = :orderEntity"),
-})
-
+@Table(name = "order_item")
 public class OrderItemEntity implements Serializable {
-
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Integer id;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="order_id")
-    private OrderEntity orderId;
-
-
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="item_id")
-    private ItemEntity itemId;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
 
     @NotNull
-    @Column(name="quantity")
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private ItemEntity item;
+
+    @NotNull
+    @Column(name = "quantity")
     private Integer quantity;
 
     @NotNull
-    @Column(name="price")
+    @Column(name = "price")
     private Integer price;
+
+    public OrderItemEntity() {}
+
+    public OrderItemEntity(
+            @NotNull OrderEntity order,
+            @NotNull ItemEntity item,
+            @NotNull Integer quantity,
+            @NotNull Integer price) {
+        this.order = order;
+        this.item = item;
+        this.quantity = quantity;
+        this.price = price;
+    }
 
     public Integer getId() {
         return id;
@@ -42,20 +63,20 @@ public class OrderItemEntity implements Serializable {
         this.id = id;
     }
 
-    public OrderEntity getOrderId() {
-        return orderId;
+    public OrderEntity getOrder() {
+        return order;
     }
 
-    public void setOrderId(OrderEntity orderId) {
-        this.orderId = orderId;
+    public void setOrder(OrderEntity order) {
+        this.order = order;
     }
 
-    public ItemEntity getItemId() {
-        return itemId;
+    public ItemEntity getItem() {
+        return item;
     }
 
-    public void setItemId(ItemEntity itemId) {
-        this.itemId = itemId;
+    public void setItem(ItemEntity item) {
+        this.item = item;
     }
 
     public Integer getQuantity() {
@@ -74,6 +95,18 @@ public class OrderItemEntity implements Serializable {
         this.price = price;
     }
 
-    public OrderItemEntity() {
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

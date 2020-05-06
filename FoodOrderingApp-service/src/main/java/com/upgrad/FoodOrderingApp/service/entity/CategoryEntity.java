@@ -1,17 +1,36 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
-@Table(name="category")
+@Table(name = "category")
 @NamedQueries({
-        @NamedQuery(name="getCategoryByUuid", query = "select q from CategoryEntity q where q.uuid = :uuid"),
-        @NamedQuery(name = "allCategories", query = "select q from CategoryEntity q"),
+        @NamedQuery(
+                name = "categoryByUuid",
+                query = "select c from CategoryEntity c where c.uuid=:uuid order by categoryName"),
+        @NamedQuery(
+                name = "getAllCategoriesOrderedByName",
+                query = "select c from CategoryEntity c order by categoryName asc"),
         @NamedQuery(
                 name = "getCategoriesByRestaurant",
                 query =
@@ -19,9 +38,7 @@ import java.util.List;
                                 + "(select r.id from RestaurantEntity r where "
                                 + " r.uuid=:restaurantUuid) )  order by c.categoryName")
 })
-
 public class CategoryEntity implements Serializable {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,5 +110,20 @@ public class CategoryEntity implements Serializable {
 
     public void setItems(List<ItemEntity> items) {
         this.items = items;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

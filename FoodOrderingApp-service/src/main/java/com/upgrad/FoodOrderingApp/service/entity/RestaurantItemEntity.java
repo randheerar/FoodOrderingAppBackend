@@ -1,25 +1,33 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
-@Table(name="restaurant_item")
-public class RestaurantItemEntity implements Serializable {
+@Table(name = "restaurant_item")
+public class RestaurantItemEntity {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Integer id;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="item_id")
-    private ItemEntity itemId;
+    @Column(name = "item_id")
+    @NotNull
+    private Integer itemId;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="restaurant_id")
-    private RestaurantEntity restaurantId;
+    @Column(name = "restaurant_id")
+    @NotNull
+    private Integer restaurantId;
 
     public Integer getId() {
         return id;
@@ -29,14 +37,34 @@ public class RestaurantItemEntity implements Serializable {
         this.id = id;
     }
 
-    public ItemEntity getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public RestaurantEntity getRestaurantId() {
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
+    public Integer getRestaurantId() {
         return restaurantId;
     }
 
-    public RestaurantItemEntity() {
+    public void setRestaurantId(Integer restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

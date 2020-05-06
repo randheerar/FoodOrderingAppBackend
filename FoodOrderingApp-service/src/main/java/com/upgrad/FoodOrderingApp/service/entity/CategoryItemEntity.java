@@ -7,24 +7,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
-@Table(name = "restaurant_category")
-public class RestaurantCategoryEntity implements Serializable {
-
+@Table(name = "category_item")
+public class CategoryItemEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "restaurant_id")
+    @Column(name = "item_id")
     @NotNull
-    private Integer restaurantId;
+    private Integer itemId;
 
     @Column(name = "category_id")
     @NotNull
@@ -38,12 +36,12 @@ public class RestaurantCategoryEntity implements Serializable {
         this.id = id;
     }
 
-    public Integer getRestaurantId() {
-        return restaurantId;
+    public Integer getItemId() {
+        return itemId;
     }
 
-    public void setRestaurantId(Integer restaurantId) {
-        this.restaurantId = restaurantId;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
     public Integer getCategoryId() {

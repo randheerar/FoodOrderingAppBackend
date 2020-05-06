@@ -1,36 +1,44 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
-@Table(name="restaurant")
+@Table(name = "restaurant")
 @NamedQueries({
         @NamedQuery(
-                name = "restaurantById",
-                query = "select r from RestaurantEntity r where r.uuid = :restaurantId"),
-        @NamedQuery(
-                name = "getAllRestaurantsByRating",
-                query = "select q from RestaurantEntity q order by q.customerRating desc"),
-        @NamedQuery(
                 name = "restaurantByUUID",
-                query = "select q from RestaurantEntity q where q.uuid = :uuid"),
+                query = "select r from RestaurantEntity r where r.uuid=:uuid"),
+        @NamedQuery(
+                name = "restaurantsByRating",
+                query = "select r from RestaurantEntity r order  by customerRating desc"),
+        @NamedQuery(
+                name = "getRestaurantByName",
+                query =
+                        "select r from RestaurantEntity r where lower(restaurantName) like lower(:searchString) "
+                                + "order by r.restaurantName asc"),
         @NamedQuery(
                 name = "restaurantByCategory",
                 query =
                         "Select r from RestaurantEntity r where id in (select rc.restaurantId from RestaurantCategoryEntity rc where rc.categoryId = "
                                 + "(select c.id from CategoryEntity c where "
-                                + "c.uuid=:categoryUuid) ) order by restaurant_name"),
-        @NamedQuery(
-                name = "getRestaurantByName",
-                query =
-                        "select r from RestaurantEntity r where lower(restaurantName) like lower(:searchString) "
-                                + "order by r.restaurantName asc")
+                                + "c.uuid=:categoryUuid) ) order by restaurant_name")
 })
-
 public class RestaurantEntity implements Serializable {
 
     @Id
@@ -68,7 +76,7 @@ public class RestaurantEntity implements Serializable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "address_id")
-    private AddressEntity  address;
+    private AddressEntity address;
 
     public Integer getId() {
         return id;
@@ -132,5 +140,20 @@ public class RestaurantEntity implements Serializable {
 
     public void setAddress(AddressEntity address) {
         this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

@@ -1,68 +1,103 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import javax.persistence.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="orders")
+@Table(name = "orders")
 @NamedQueries({
-        @NamedQuery(name = "pastOrdersByDate", query = "select o from OrderEntity o where o.customer = :customer order by o.date desc"),
-        @NamedQuery(name = "ordersByCustomer", query = "select o from OrderEntity o where o.customer = :customer order by o.date desc "),
-        @NamedQuery(name = "ordersByRestaurant", query = "select q from OrderEntity q where q.restaurant = :restaurant"),
-
+        @NamedQuery(
+                name = "allOrdersByAddress",
+                query = "select o from OrderEntity o where o.address=:address"),
+        @NamedQuery(
+                name = "getOrdersByCustomer",
+                query =
+                        "select o from OrderEntity o where o.customer.uuid=:customerUUID order by o.date desc")
 })
-
 public class OrderEntity implements Serializable {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Integer id;
 
-    @Column(name="uuid")
-    @Size(max=200)
     @NotNull
+    @Size(max = 200)
+    @Column(name = "uuid", unique = true)
     private String uuid;
 
-    @Column(name="bill")
     @NotNull
-    private BigDecimal bill;
+    @Column(name = "bill")
+    private Double bill;
 
-    @Column(name="discount")
     @NotNull
-    private BigDecimal discount;
+    @Column(name = "discount")
+    private Double discount;
 
+    @NotNull
     @Column(name = "date")
-    @NotNull
-    private Date date;
+    private ZonedDateTime date;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="customer_id")
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CustomerEntity customer;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="address_id")
-    private RestaurantAddressEntity address;
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private AddressEntity address;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="restaurant_id")
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private RestaurantEntity restaurant;
 
-    @OneToMany(mappedBy = "orderId", cascade= CascadeType.ALL, fetch= FetchType.LAZY)
-    private List<OrderItemEntity> orderItem = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<OrderItemEntity> orderItems = new ArrayList<>();
 
-    public List<OrderItemEntity> getOrderItem() {
-        return orderItem;
-    }
+    public OrderEntity() {}
 
-    public void setOrderItem(List<OrderItemEntity> orderItem) {
-        this.orderItem = orderItem;
+    public OrderEntity(
+            @NotNull @Size(max = 200) String uuid,
+            @NotNull Double bill,
+            @NotNull Double discount,
+            @NotNull Date date,
+            CustomerEntity customerEntity,
+            AddressEntity address,
+            RestaurantEntity restaurant) {
+        this.uuid = uuid;
+        this.bill = bill;
+        this.discount = discount;
+        this.date = date.toInstant().atZone(ZoneId.systemDefault());
+        this.customer = customerEntity;
+        this.address = address;
+        this.restaurant = restaurant;
     }
 
     public Integer getId() {
@@ -82,26 +117,26 @@ public class OrderEntity implements Serializable {
     }
 
     public Double getBill() {
-        return bill.doubleValue();
+        return bill;
     }
 
     public void setBill(Double bill) {
-        this.bill = new BigDecimal(bill);
+        this.bill = bill;
     }
 
     public Double getDiscount() {
-        return discount.doubleValue();
+        return discount;
     }
 
     public void setDiscount(Double discount) {
-        this.discount = new BigDecimal(discount);
+        this.discount = discount;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 
@@ -109,15 +144,15 @@ public class OrderEntity implements Serializable {
         return customer;
     }
 
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
+    public void setCustomer(CustomerEntity customerEntity) {
+        this.customer = customerEntity;
     }
 
-    public RestaurantAddressEntity getAddress() {
+    public AddressEntity getAddress() {
         return address;
     }
 
-    public void setAddress(RestaurantAddressEntity address) {
+    public void setAddress(AddressEntity address) {
         this.address = address;
     }
 
@@ -127,5 +162,28 @@ public class OrderEntity implements Serializable {
 
     public void setRestaurant(RestaurantEntity restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public List<OrderItemEntity> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItemEntity> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

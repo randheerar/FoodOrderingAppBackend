@@ -1,38 +1,59 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
-import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
-import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CategoryDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @PersistenceContext private EntityManager entityManager;
 
     /**
-     * returns the categories by uuid
-     * @return uuid
-     **/
-    public CategoryEntity getCategoryByUuid(final String uuid){
-        try{
-            return entityManager.createNamedQuery("getCategoryByUuid", CategoryEntity.class).setParameter("uuid",uuid).getSingleResult();
-        } catch (NoResultException nre){
+     * This method fetches CategoryEntity from database based Category UUID.
+     *
+     * @param categoryUuid
+     * @return CategoryEntity or null if there is no category in database by given categoryUuid.
+     */
+    public CategoryEntity getCategoryByUuid(final String categoryUuid) {
+        try {
+            return entityManager
+                    .createNamedQuery("categoryByUuid", CategoryEntity.class)
+                    .setParameter("uuid", categoryUuid)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
             return null;
         }
     }
 
     /**
-     * returns categories from DB and returns the list of categories
-     * @return list
-     **/
-    public List<CategoryEntity> getAllCategories() {
+     * This method fetches all CategoryEntity from db
+     *
+     * @param
+     * @return List of categoryEntity
+     */
+    public List<CategoryEntity> getAllCategoriesOrderedByName() {
+
+        return entityManager
+                .createNamedQuery("getAllCategoriesOrderedByName", CategoryEntity.class)
+                .getResultList();
+    }
+
+    /**
+     * This method fetches all CategoryEntity from db for given restaurant
+     *
+     * @param restaurantUuid
+     * @return List of categoryEntity
+     */
+    public List<CategoryEntity> getCategoriesByRestaurant(final String restaurantUuid) {
         try {
-            return entityManager.createNamedQuery("allCategories", CategoryEntity.class).getResultList();
+            return entityManager
+                    .createNamedQuery("getCategoriesByRestaurant", CategoryEntity.class)
+                    .setParameter("restaurantUuid", restaurantUuid)
+                    .getResultList();
         } catch (NoResultException nre) {
             return null;
         }
