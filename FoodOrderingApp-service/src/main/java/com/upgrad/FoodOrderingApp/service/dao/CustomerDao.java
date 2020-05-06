@@ -19,23 +19,42 @@ public class CustomerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public CustomerEntity createCustomer(CustomerEntity users) {
+    /**
+     * This method saves the details of the new customer in database.
+     *
+     * @param users for creating new customer.
+     * @return CustomerEntity object.
+     */
+    public CustomerEntity saveCustomer(final CustomerEntity users) {
         entityManager.persist(users);
         return users;
     }
 
+    /**
+     * This method helps finds the customer by using contact number.
+     *
+     * @param phoneNumber to find the customer is already registered with this number
+     * @return CustomerEntity if the contact number exists in the database
+     */
     public CustomerEntity getUserByPhone(final String phoneNumber) {
-
         try {
-            return entityManager.createNamedQuery("userByPhone", CustomerEntity.class).setParameter("contact_number", phoneNumber).getSingleResult();
+            return entityManager
+                    .createNamedQuery("userByPhone", CustomerEntity.class)
+                    .setParameter("contact_number", phoneNumber)
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }
     }
 
+    /**
+     * This method stores authorization access token in the database
+     *
+     * @param userAuthTokenEntity the CustomerAuthEntity object from which new authorization will be
+     *     created
+     */
     public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
         entityManager.persist(userAuthTokenEntity);
-
         return userAuthTokenEntity;
     }
 
@@ -46,11 +65,11 @@ public class CustomerDao {
         return userAuthTokenEntity;
     }
 
-    public UserAuthTokenEntity getAuthTokenByUUID(String UUID)
+    public UserAuthTokenEntity getAuthTokenByUUID(int id)
     {
 
         try {
-            return entityManager.createNamedQuery("userAuthTokenByUUID", UserAuthTokenEntity.class).setParameter("uuid", UUID).getSingleResult();
+            return entityManager.createNamedQuery("userAuthTokenByUUID", UserAuthTokenEntity.class).setParameter("customer_id", id).getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -88,36 +107,16 @@ public class CustomerDao {
         }
     }
 
-    @Transactional
-    public void updateUser(final CustomerEntity customer) {
+
+    public CustomerEntity updateUser(final CustomerEntity customer) {
         entityManager.merge(customer);
+        return customer;
     }
 
     @Transactional
     public UserAuthTokenEntity signoutUser(final UserAuthTokenEntity userAuthTokenEntity) {
-        userAuthTokenEntity.setLogout_at( ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
+        userAuthTokenEntity.setLogoutAt( ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         entityManager.merge(userAuthTokenEntity);
         return  userAuthTokenEntity;
-    }
-
-    @Transactional
-    public CustomerEntity  editCustomer(CustomerEntity customers)
-    {
-        try {
-/*             entityManager.createNamedQuery("editById", CustomerEntity.class).setParameter("firstname", customers.getFirstname()).setParameter("lastname", customers.getLastname()).setParameter("uuid", customers.getUuid())
-              .executeUpdate();*/
-            entityManager.createNamedQuery("editById", CustomerEntity.class)
-                    .setParameter(1, customers.getFirstName())
-                    .setParameter(2, customers.getLastName())
-                    .setParameter(3, customers.getUuid())
-                    .executeUpdate();
-
-            //Execute the delete query
-           // entityManager.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return customers;
     }
 }

@@ -24,30 +24,32 @@ import java.time.ZonedDateTime;
 
 @NamedQueries({
 
-        @NamedQuery(name = "userAuthByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.access_token = :accessToken "),
-        @NamedQuery(name = "userAuthTokenByUUID", query = "select ut from UserAuthTokenEntity ut where ut.uuid = :uuid "),
+        @NamedQuery(name = "userAuthByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken "),
+        @NamedQuery(name = "userAuthTokenByUUID", query = "select ut from UserAuthTokenEntity ut where ut.customer.id = :id "),
         @NamedQuery(name = "deleteById", query = "select ut from UserAuthTokenEntity ut where ut.id = :id ")
 
 
 })
 public class UserAuthTokenEntity {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(name = "UUID")
+    @Column(name = "uuid")
     String uuid;
-//    @Column(name = "CUSTOMER_ID")
-//    int user_id;
-    @Column(name = "ACCESS_TOKEN")
-    String access_token;
-    @Column(name = "EXPIRES_AT")
-    ZonedDateTime expires_at;
-    @Column(name = "LOGIN_AT")
-    ZonedDateTime login_at;
-    @Column(name = "LOGOUT_AT")
-    ZonedDateTime logout_at;
+
+    @Column(name = "access_token")
+    String accessToken;
+
+    @Column(name = "expires_at")
+    ZonedDateTime expiresAt;
+
+    @Column(name = "login_at")
+    ZonedDateTime loginAt;
+
+    @Column(name = "logout_at")
+    ZonedDateTime logoutAt;
 
     @ManyToOne
     @NotNull
@@ -79,43 +81,35 @@ public class UserAuthTokenEntity {
         this.uuid = uuid;
     }
 
-//    public int getUser_id() {
-//        return user_id;
-//    }
-//
-//    public void setUser_id(int user_id) {
-//        this.user_id = user_id;
-//    }
-
     public String getAccessToken() {
-        return access_token;
+        return accessToken;
     }
 
-    public void setAccessToken(String access_token) {
-        this.access_token = access_token;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public ZonedDateTime getExpires_at() {
-        return expires_at;
+    public ZonedDateTime getExpiresAt() {
+        return expiresAt;
     }
 
-    public void setExpires_at(ZonedDateTime expires_at) {
-        this.expires_at = expires_at;
+    public void setExpiresAt(ZonedDateTime expiresAt) {
+        this.expiresAt = expiresAt;
     }
 
-    public ZonedDateTime getLogin_at() {
-        return login_at;
+    public ZonedDateTime getLoginAt() {
+        return loginAt;
     }
 
-    public void setLogin_at(ZonedDateTime login_at) {
-        this.login_at = login_at;
+    public void setLoginAt(ZonedDateTime loginAt) {
+        this.loginAt = loginAt;
     }
 
-    public ZonedDateTime getLogout_at() {
-        return logout_at;
+    public ZonedDateTime getLogoutAt() {
+        return logoutAt;
     }
 
-    public void setLogout_at(ZonedDateTime logout_at) {
-        this.logout_at = logout_at;
+    public void setLogoutAt(ZonedDateTime logoutAt) {
+        this.logoutAt = logoutAt;
     }
 }

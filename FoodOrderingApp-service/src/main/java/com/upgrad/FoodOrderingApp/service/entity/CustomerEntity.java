@@ -24,9 +24,9 @@ import java.util.List;
 })
 @NamedQueries(
         {
+                @NamedQuery(name = "userByPhone", query = "select u from CustomerEntity u where u.contactNumber =:contact_number"),
                 @NamedQuery(name = "userByUuid", query = "select u from CustomerEntity u where u.uuid = :uuid"),
                 @NamedQuery(name = "userByEmail", query = "select u from CustomerEntity u where u.emailAddress =:email"),
-                @NamedQuery(name = "userByPhone", query = "select u from CustomerEntity u where u.contactNumber =:contact_number"),
                 @NamedQuery(name = "userById", query = "select u from CustomerEntity u where u.id =:id"),
 
 

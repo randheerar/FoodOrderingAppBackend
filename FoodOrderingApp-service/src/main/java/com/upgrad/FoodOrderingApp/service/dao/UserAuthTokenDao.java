@@ -27,10 +27,7 @@ public class UserAuthTokenDao {
      *
      * @param accessToken access-token obtained during successful login.
      * @return UserAuthTokenEntity or null of token not found in database. This method helps to find
-     *     the customer using the access token. ======= This method helps to find the customer using
-     *     the access token.
-     *     <p>>>>>>>> Closes #8 added code for /address/{address_id} end point api to delete the
-     *     address of a customer if no orders placed using the given address
+     *     the customer using the access token.
      * @param accessToken the access token which will be searched in database to find the customer.
      * @return UserAuthTokenEntity object if given access token exists in the database.
      */
@@ -46,7 +43,7 @@ public class UserAuthTokenDao {
     }
 
     /**
-     * This method updates the customers logout time in the database.
+     * method to update customer logout time in the database.
      *
      * @param updatedUserAuthTokenEntity UserAuthTokenEntity object to update.
      */

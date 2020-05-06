@@ -13,6 +13,7 @@ public class SignUpRestrictedException extends Exception {
     public SignUpRestrictedException(final String code, final String errorMessage) {
         this.code = code;
         this.errorMessage = errorMessage;
+
     }
 
     @Override
