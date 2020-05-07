@@ -4,7 +4,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.dao.UserAuthTokenDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import org.apache.commons.validator.routines.EmailValidator;
-import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
@@ -91,16 +91,16 @@ public class CustomerService {
     }
 
     @Transactional(noRollbackFor = {TransactionException.class})
-    public UserAuthTokenEntity signoutUser(String accessToken) throws AuthorizationFailedException {
+    public CustomerAuthEntity signoutUser(String accessToken) throws AuthorizationFailedException {
 
-        UserAuthTokenEntity userAuthTokenEntity = checkAccessToken(accessToken);
+        CustomerAuthEntity userAuthTokenEntity = checkAccessToken(accessToken);
          return customerDao.signoutUser(userAuthTokenEntity);
 
     }
 
     @Transactional(noRollbackFor = {TransactionException.class})
-    public UserAuthTokenEntity checkAccessToken(String accessToken) throws AuthorizationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = customerDao.checkAuthToken(accessToken.replace("Bearer ",""));
+    public CustomerAuthEntity checkAccessToken(String accessToken) throws AuthorizationFailedException{
+        CustomerAuthEntity userAuthTokenEntity = customerDao.checkAuthToken(accessToken.replace("Bearer ",""));
         if (userAuthTokenEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in");
         }
@@ -124,7 +124,7 @@ public class CustomerService {
 
     }
     @Transactional(noRollbackFor = {TransactionException.class})
-    public UserAuthTokenEntity authenticate(final String phone, final String password)
+    public CustomerAuthEntity authenticate(final String phone, final String password)
             throws AuthenticationFailedException {
 
         CustomerEntity userEntity = customerDao.getUserByPhone(phone);
@@ -137,7 +137,7 @@ public class CustomerService {
 
         if(encryptedPassword.equals(userEntity.getPassword())){
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
-            UserAuthTokenEntity userAuthToken = new UserAuthTokenEntity();
+            CustomerAuthEntity userAuthToken = new CustomerAuthEntity();
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
             String accessToken = jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt);
@@ -163,7 +163,7 @@ public class CustomerService {
     }
 
     @Transactional(noRollbackFor={TransactionException.class})
-    public UserAuthTokenEntity signout(String  accessToken) throws AuthorizationFailedException {
+    public CustomerAuthEntity signout(String  accessToken) throws AuthorizationFailedException {
         return signoutUser(accessToken);
     }
 
@@ -202,8 +202,7 @@ public class CustomerService {
      * @throws AuthorizationFailedException Based on token validity.
      */
     public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(accessToken);
-        System.out.println("test2 "+userAuthTokenEntity.getCustomer());
+        CustomerAuthEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(accessToken);
         if (userAuthTokenEntity != null) {
 
             if (userAuthTokenEntity.getLogoutAt() != null) {
@@ -229,9 +228,9 @@ public class CustomerService {
      * @throws AuthorizationFailedException if any of the validation fails on customer authorization.
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity logout(final String accessToken) throws AuthorizationFailedException {
+    public CustomerAuthEntity logout(final String accessToken) throws AuthorizationFailedException {
         System.out.println("test1 "+accessToken);
-        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(accessToken);
+        CustomerAuthEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(accessToken);
         CustomerEntity customerEntity = getCustomer(accessToken);
         userAuthTokenEntity.setCustomer(customerEntity);
         userAuthTokenEntity.setLogoutAt(ZonedDateTime.now());

@@ -2,7 +2,7 @@ package com.upgrad.FoodOrderingApp.service.dao;
 
 
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,55 +53,18 @@ public class CustomerDao {
      * @param userAuthTokenEntity the CustomerAuthEntity object from which new authorization will be
      *     created
      */
-    public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
+    public CustomerAuthEntity createAuthToken(final CustomerAuthEntity userAuthTokenEntity) {
         entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
 
-    @Modifying
-    @Transactional
-    public UserAuthTokenEntity updateAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
-        entityManager.merge(userAuthTokenEntity);
-        return userAuthTokenEntity;
-    }
-
-    public UserAuthTokenEntity getAuthTokenByUUID(int id)
-    {
+    public CustomerAuthEntity checkAuthToken(final String accessToken) {
 
         try {
-            return entityManager.createNamedQuery("userAuthTokenByUUID", UserAuthTokenEntity.class).setParameter("customer_id", id).getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public CustomerEntity getCustomerByUUID(String UUID)
-    {
-
-        try {
-            return entityManager.createNamedQuery("userByUuid", CustomerEntity.class).setParameter("uuid", UUID).getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
-
-    public void deleteAuthTokenById(int id)
-    {
-        try {
-             entityManager.createNamedQuery("deleteAuthTokenById", UserAuthTokenEntity.class) .setParameter(1, id)
-                     .executeUpdate();
-             entityManager.flush();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public UserAuthTokenEntity checkAuthToken(final String accessToken) {
-
-        try {
-            return entityManager.createNamedQuery("userAuthByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+            return entityManager
+                    .createNamedQuery("userAuthByAccessToken", CustomerAuthEntity.class)
+                    .setParameter("accessToken", accessToken)
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -114,7 +77,7 @@ public class CustomerDao {
     }
 
     @Transactional
-    public UserAuthTokenEntity signoutUser(final UserAuthTokenEntity userAuthTokenEntity) {
+    public CustomerAuthEntity signoutUser(final CustomerAuthEntity userAuthTokenEntity) {
         userAuthTokenEntity.setLogoutAt( ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         entityManager.merge(userAuthTokenEntity);
         return  userAuthTokenEntity;

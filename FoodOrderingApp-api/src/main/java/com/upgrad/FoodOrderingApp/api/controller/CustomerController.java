@@ -3,7 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
@@ -55,8 +55,7 @@ public class CustomerController {
             throw  new AuthenticationFailedException("ATH-003","Incorrect format of decoded customer name and password");
         }
 
-
-            UserAuthTokenEntity userAuthResponse = customerService.authenticate(username, password);
+            CustomerAuthEntity userAuthResponse = customerService.authenticate(username, password);
             LoginResponse authorizedUserResponse =  new LoginResponse();
             authorizedUserResponse.setId(userAuthResponse.getCustomer().getUuid());
             authorizedUserResponse.setMessage("LOGGED IN SUCCESSFULLY");
@@ -91,7 +90,7 @@ public class CustomerController {
             @RequestHeader("authorization") final String accessToken)
             throws AuthorizationFailedException {
 
-        UserAuthTokenEntity userAuthTokenEntity= customerService.logout(accessToken.replace("Bearer ",""));
+        CustomerAuthEntity userAuthTokenEntity= customerService.logout(accessToken.replace("Bearer ",""));
 
         LogoutResponse userResponse = new LogoutResponse()
                 .id(userAuthTokenEntity.getCustomer().getUuid())
@@ -149,7 +148,7 @@ public class CustomerController {
             path = "/",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UpdateCustomerResponse> update(
+    public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(
             @RequestHeader("authorization") final String accessToken,
             @RequestBody(required = true) final UpdateCustomerRequest updateCustomerRequest)
             throws UpdateCustomerException, AuthorizationFailedException {

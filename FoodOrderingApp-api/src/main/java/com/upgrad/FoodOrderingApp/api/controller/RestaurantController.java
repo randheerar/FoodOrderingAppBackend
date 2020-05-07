@@ -249,7 +249,7 @@ public class RestaurantController {
                 new RestaurantDetailsResponseAddressState();
         AddressEntity addressEntity = restaurantAddress;
         restaurantDetailsResponseAddress.setId(UUID.fromString(addressEntity.getUuid()));
-        restaurantDetailsResponseAddress.setFlatBuildingName(addressEntity.getFlat_buil_number());
+        restaurantDetailsResponseAddress.setFlatBuildingName(addressEntity.getFlatBuilNo());
         restaurantDetailsResponseAddress.setCity(addressEntity.getCity());
         restaurantDetailsResponseAddress.setLocality(addressEntity.getLocality());
         restaurantDetailsResponseAddress.setPincode(addressEntity.getPincode());

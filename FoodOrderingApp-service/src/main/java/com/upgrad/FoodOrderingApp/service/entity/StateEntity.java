@@ -6,12 +6,12 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
+@Table(name="state")
 @NamedQueries({
-        @NamedQuery(name = "stateByUUID", query = "SELECT s from StateEntity s WHERE  s.uuid = :uuid"),
+        @NamedQuery(name = "getStateByUuid", query = "SELECT s from StateEntity s WHERE  s.uuid = :uuid"),
         @NamedQuery(name = "getAllStates", query = "SELECT s FROM StateEntity s")
 })
 
-@Table(name="state")
 public class StateEntity implements Serializable {
 
     @Id

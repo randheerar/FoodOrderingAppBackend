@@ -1,6 +1,10 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -50,7 +54,7 @@ public class AddressEntity implements Serializable {
 
     @Column(name = "flat_buil_number")
     @Size(max = 255)
-    private String flat_buil_number;
+    private String flatBuilNo;
 
     @Column(name = "locality")
     @Size(max = 255)
@@ -82,7 +86,7 @@ public class AddressEntity implements Serializable {
             @Size(max = 30) String pincode,
             StateEntity state) {
         this.uuid = uuid;
-        this.flat_buil_number = flatBuilNo;
+        this.flatBuilNo = flatBuilNo;
         this.locality = locality;
         this.city = city;
         this.pincode = pincode;
@@ -105,12 +109,12 @@ public class AddressEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getFlat_buil_number() {
-        return flat_buil_number;
+    public String getFlatBuilNo() {
+        return flatBuilNo;
     }
 
-    public void setFlat_buil_number(String flat_buil_number) {
-        this.flat_buil_number = flat_buil_number;
+    public void setFlatBuilNo(String flatBuilNo) {
+        this.flatBuilNo = flatBuilNo;
     }
 
     public String getLocality() {
@@ -151,6 +155,21 @@ public class AddressEntity implements Serializable {
 
     public void setActive(Integer active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
 

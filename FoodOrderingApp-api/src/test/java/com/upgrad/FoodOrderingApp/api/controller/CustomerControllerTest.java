@@ -1,7 +1,7 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-import com.upgrad.FoodOrderingApp.service.entity.UserAuthTokenEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -139,15 +139,15 @@ public class CustomerControllerTest {
 
     @Test
     public void shouldLoginForValidRequest() throws Exception {
-        final UserAuthTokenEntity createdUserAuthTokenEntity = new UserAuthTokenEntity();
-        createdUserAuthTokenEntity.setAccessToken("accessToken");
+        final CustomerAuthEntity createdCustomerAuthEntity = new CustomerAuthEntity();
+        createdCustomerAuthEntity.setAccessToken("accessToken");
         final CustomerEntity customerEntity = new CustomerEntity();
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
-        createdUserAuthTokenEntity.setCustomer(customerEntity);
+        createdCustomerAuthEntity.setCustomer(customerEntity);
 
         when(mockCustomerService.authenticate("9090909090", "CorrectPassword"))
-                .thenReturn(createdUserAuthTokenEntity);
+                .thenReturn(createdCustomerAuthEntity);
 
         mockMvc
                 .perform(post("/customer/login")
@@ -206,12 +206,12 @@ public class CustomerControllerTest {
 
     @Test
     public void shouldLogoutForValidRequest() throws Exception {
-        final UserAuthTokenEntity createdUserAuthTokenEntity = new UserAuthTokenEntity();
+        final CustomerAuthEntity createdCustomerAuthEntity = new CustomerAuthEntity();
         final CustomerEntity customerEntity = new CustomerEntity();
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
-        createdUserAuthTokenEntity.setCustomer(customerEntity);
-        when(mockCustomerService.logout("access-token")).thenReturn(createdUserAuthTokenEntity);
+        createdCustomerAuthEntity.setCustomer(customerEntity);
+        when(mockCustomerService.logout("access-token")).thenReturn(createdCustomerAuthEntity);
 
         mockMvc
                 .perform(post("/customer/logout")

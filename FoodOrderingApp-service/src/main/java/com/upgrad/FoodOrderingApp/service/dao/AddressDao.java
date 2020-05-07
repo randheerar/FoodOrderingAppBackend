@@ -74,9 +74,9 @@ public class AddressDao {
 
 
     public List<StateEntity> getAllState() {
-
-        return entityManager.createNamedQuery("getAllStates", StateEntity.class).getResultList();
-
+        return entityManager
+                .createNamedQuery("getAllStates", StateEntity.class)
+                .getResultList();
     }
 
     /**
@@ -96,4 +96,26 @@ public class AddressDao {
         }
         return addresses;
     }
+
+    /**
+     * Deletes the given address entity.
+     *
+     * @param addressEntity Address to delete from database.
+     * @return AddressEntity object.
+     */
+    public AddressEntity deleteAddress(final AddressEntity addressEntity) {
+        entityManager.remove(addressEntity);
+        return addressEntity;
+    }
+
+    /**
+     * Updated the given address entity by setting active to 0 if orders placed with given address.
+     *
+     * @param addressEntity Address to update.
+     * @return AddressEntity object.
+     */
+    public AddressEntity updateAddress(final AddressEntity addressEntity) {
+        return entityManager.merge(addressEntity);
+    }
 }
+

@@ -257,7 +257,7 @@ public class OrderController {
     private OrderListAddress getOrderListAddress(AddressEntity address) {
         OrderListAddress orderListAddress = new OrderListAddress();
         orderListAddress.setId(UUID.fromString(address.getUuid()));
-        orderListAddress.setFlatBuildingName(address.getFlat_buil_number());
+        orderListAddress.setFlatBuildingName(address.getFlatBuilNo());
         orderListAddress.setLocality(address.getLocality());
         orderListAddress.setCity(address.getCity());
         orderListAddress.setPincode(address.getPincode());

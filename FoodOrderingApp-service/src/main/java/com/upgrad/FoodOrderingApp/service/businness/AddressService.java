@@ -1,17 +1,14 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.dao.AddressDao;
-import com.upgrad.FoodOrderingApp.service.dao.CustomerAdressDao;
-import com.upgrad.FoodOrderingApp.service.dao.StateDao;
-import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+import com.upgrad.FoodOrderingApp.service.dao.*;
+import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +17,21 @@ import java.util.List;
 public class AddressService {
     @Autowired
     private AddressDao addressDao;
+
     @Autowired
     private CustomerAdressDao customerAdressDao;
+
     @Autowired
     CustomerService customerService;
 
     @Autowired
     private StateDao stateDao;
 
+    @Autowired
+    private OrdersDao ordersDao;
 
-    public List<AddressEntity> getAddressList(CustomerEntity customerEntity) {
+
+    public List<AddressEntity> getAllAddress(CustomerEntity customerEntity) {
         List<AddressEntity> addressEntityList = new ArrayList<>();
         List<CustomerAddressEntity> customerAddressEntityList =
                 addressDao.customerAddressByCustomer(customerEntity);
@@ -47,8 +49,8 @@ public class AddressService {
                 && !address.getLocality().isEmpty()
                 && address.getCity() != null
                 && !address.getCity().isEmpty()
-                && address.getFlat_buil_number() != null
-                && !address.getFlat_buil_number().isEmpty()
+                && address.getFlatBuilNo() != null
+                && !address.getFlatBuilNo().isEmpty()
                 && address.getPincode() != null
                 && !address.getPincode().isEmpty()
                 && address.getState() != null) {
@@ -75,20 +77,17 @@ public class AddressService {
 
     }
 
-
-    public String delete(String uuid, String accesstoken) throws AuthorizationFailedException, AddressNotFoundException {
-
-        if(uuid.isEmpty())
-            throw new AddressNotFoundException("ANF-005","Address id can not be empty");
-
-        customerService.checkAccessToken(accesstoken);
-        if(addressDao.getAddressByUUID(uuid)==null)
-            throw new AddressNotFoundException("ANF-003","No address by this id");
-
-      return   addressDao.delete(uuid);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AddressEntity deleteAddress(final AddressEntity addressEntity) {
+        final List<OrderEntity> orders = ordersDao.getAllOrdersByAddress(addressEntity);
+        if (orders == null || orders.isEmpty()) {
+            return addressDao.deleteAddress(addressEntity);
+        }
+        addressEntity.setActive(0);
+        return addressDao.updateAddress(addressEntity);
     }
 
-    public List<StateEntity> getStateList() {
+    public List<StateEntity> getAllStates() {
         return addressDao.getAllState();
     }
 
@@ -99,11 +98,12 @@ public class AddressService {
      * @return StateEntity object.
      * @throws AddressNotFoundException If given uuid does not exist in database.
      */
-    public StateEntity getStateByUUID(final String stateUuid) throws AddressNotFoundException {
-        if (stateDao.findStateByUUID(stateUuid) == null) {
+    public StateEntity getStateByUUID(final String stateUuid)
+            throws AddressNotFoundException {
+        if (stateDao.getStateByUUID(stateUuid) == null) {
             throw new AddressNotFoundException("ANF-002", "No state by this id");
         }
-        return stateDao.findStateByUUID(stateUuid);
+        return stateDao.getStateByUUID(stateUuid);
     }
 
     /**
