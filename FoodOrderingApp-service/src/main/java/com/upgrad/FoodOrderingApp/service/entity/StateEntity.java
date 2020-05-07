@@ -6,35 +6,33 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
+@Table(name="state")
 @NamedQueries({
-        @NamedQuery(name = "stateByUUID", query = "SELECT s from StateEntity s WHERE  s.uuid = :uuid"),
+        @NamedQuery(name = "getStateByUuid", query = "SELECT s from StateEntity s WHERE  s.uuid = :uuid"),
         @NamedQuery(name = "getAllStates", query = "SELECT s FROM StateEntity s")
 })
 
-@Table(name="state")
 public class StateEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
-    @Column(name="id")
-    private int id;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name="uuid")
-    @Size(max=200)
+    @Size(max = 200)
     @NotNull
+    @Column(name = "uuid", unique = true)
     private String uuid;
 
-    @Column(name="state_name")
-    @Size(max=30)
-    @NotNull
-    private String state_name;
+    @Size(max = 30)
+    @Column(name = "state_name")
+    private String stateName;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -46,7 +44,19 @@ public class StateEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getState_name() {
-        return state_name;
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public StateEntity() {}
+
+    public StateEntity(
+            @NotNull @Size(max = 200) String uuid, @NotNull @Size(max = 30) String stateName) {
+        this.uuid = uuid;
+        this.stateName = stateName;
     }
 }

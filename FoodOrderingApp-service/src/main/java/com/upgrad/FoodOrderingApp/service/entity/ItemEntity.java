@@ -1,54 +1,88 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import com.upgrad.FoodOrderingApp.service.common.ItemType;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import com.upgrad.FoodOrderingApp.service.common.ItemType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
-@Table(name="item")
-@NamedQueries({
-        @NamedQuery(name = "itemById", query = "select i from ItemEntity i where i.uuid = :itemId"),
-        @NamedQuery(name = "itemByUUID", query = "select i from ItemEntity i where i.uuid = :uuid"),
+@Table(name = "item")
+@NamedNativeQueries({
+        // Using native query as named queries do not support LIMIT in nested statements.
+        @NamedNativeQuery(
+                name = "topFivePopularItemsByRestaurant",
+                query =
+                        "select * from item where id in "
+                                + "(select item_id from order_item where order_id in "
+                                + "(select id from orders where restaurant_id = ? ) "
+                                + "group by order_item.item_id "
+                                + "order by (count(order_item.order_id)) "
+                                + "desc LIMIT 5)",
+                resultClass = ItemEntity.class)
 })
-
+@NamedQueries({
+        @NamedQuery(name = "itemByUUID", query = "select i from ItemEntity i where i.uuid=:itemUUID"),
+        @NamedQuery(
+                name = "getAllItemsInCategoryInRestaurant",
+                query =
+                        "select i from ItemEntity i  where id in (select ri.itemId from RestaurantItemEntity ri "
+                                + "inner join CategoryItemEntity ci on ri.itemId = ci.itemId "
+                                + "where ri.restaurantId = (select r.id from RestaurantEntity r where "
+                                + "r.uuid=:restaurantUuid) and ci.categoryId = "
+                                + "(select c.id from CategoryEntity c where c.uuid=:categoryUuid ) )"
+                                + "order by lower(i.itemName) asc")
+})
 public class ItemEntity implements Serializable {
-
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Integer id;
 
-    @Column(name="uuid")
-    @Size(max=200)
     @NotNull
+    @Size(max = 200)
+    @Column(name = "uuid", unique = true)
     private String uuid;
 
-    @Column(name="item_name")
-    @Size(max=30)
     @NotNull
+    @Size(max = 30)
+    @Column(name = "item_name")
     private String itemName;
 
     @NotNull
-    @Column(name="price")
+    @Column(name = "price")
     private Integer price;
 
-    @ManyToMany
-    @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "item_id"),
-            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
-    private List<RestaurantEntity> restaurants = new ArrayList<>();
-
-    @OneToMany(mappedBy = "itemId", cascade= CascadeType.ALL, fetch= FetchType.LAZY)
-    private List<RestaurantItemEntity> restaurantItem = new ArrayList<>();
-
-    @Column(name="type")
-    @Size(max=10)
     @NotNull
-    private ItemType type;
+    @Size(max = 10)
+    @Column(name = "type")
+    private String type;
+
+    public ItemEntity() {}
+
+    public ItemEntity(
+            @NotNull @Size(max = 200) String uuid,
+            @NotNull @Size(max = 30) String itemName,
+            @NotNull Integer price,
+            @NotNull @Size(max = 10) String type) {
+        this.uuid = uuid;
+        this.itemName = itemName;
+        this.price = price;
+        this.type = type;
+    }
 
     public Integer getId() {
         return id;
@@ -82,27 +116,26 @@ public class ItemEntity implements Serializable {
         this.price = price;
     }
 
-    public List<RestaurantEntity> getRestaurants() {
-        return restaurants;
-    }
-
-    public void setRestaurants(List<RestaurantEntity> restaurants) {
-        this.restaurants = restaurants;
-    }
-
-    public List<RestaurantItemEntity> getRestaurantItem() {
-        return restaurantItem;
-    }
-
-    public void setRestaurantItem(List<RestaurantItemEntity> restaurantItem) {
-        this.restaurantItem = restaurantItem;
-    }
-
-    public ItemType getType() {
+    public String getType() {
         return type;
     }
 
-    public ItemEntity() {
+    public void setType(ItemType type) {
+        this.type = type.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
 }

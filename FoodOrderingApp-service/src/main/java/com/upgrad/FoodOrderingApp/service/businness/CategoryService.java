@@ -1,63 +1,52 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
+import java.util.List;
 import com.upgrad.FoodOrderingApp.service.dao.CategoryDao;
-import com.upgrad.FoodOrderingApp.service.dao.RestaurantDao;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
-import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class CategoryService {
 
-    @Autowired
-    private RestaurantDao restaurantDao;
+    @Autowired public CategoryDao categoryDao;
 
-    @Autowired
-    private CategoryDao categoryDao;
-
-    /**
-     * returns categories of restaurant in alphabetical order.
-     * @return takes restaurant uuid as input param and returns sorted categories alphabetically
-     **/
-    public List<CategoryEntity> getCategoriesByRestaurant(String RestaurantUuid){
-        RestaurantEntity restaurantEntity = restaurantDao.restaurantByUUID(RestaurantUuid);
-        return restaurantEntity.getCategories().stream().sorted(Comparator.comparing(CategoryEntity::getCategoryName)).collect(Collectors.toList());
-    }
-
-    /**
-     * method returns all the categories list ordered by their names.
-     * @return List
-     **/
-    public List<CategoryEntity> getAllCategoriesOrderedByName() {
-        return categoryDao.getAllCategories().stream()
-                .sorted(Comparator.comparing(CategoryEntity::getCategoryName))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * returns category based on Id
-     * @param categoryId
-     * @return
-     * @throws CategoryNotFoundException
-     */
-    public CategoryEntity getCategoryById(String categoryId) throws CategoryNotFoundException {
-
-        if(categoryId.equals("")){
+    /*Get category for given category uuid
+     *
+     * @param uuid of category
+     * @return CategoryEntity for given uuid
+     * */
+    public CategoryEntity getCategoryById(final String uuid) throws CategoryNotFoundException {
+        if (uuid == null) {
             throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
         }
-
-        CategoryEntity categoryEntity = categoryDao.getCategoryByUuid(categoryId);
-
-        if(categoryEntity==null){
+        CategoryEntity categoryEntity = categoryDao.getCategoryByUuid(uuid);
+        if (categoryEntity == null) {
             throw new CategoryNotFoundException("CNF-002", "No category by this id");
         }
-
         return categoryEntity;
+    }
+
+    /*Get all categories in db
+     *
+     *
+     * @return List of CategoryEntity
+     * */
+    public List<CategoryEntity> getAllCategoriesOrderedByName() {
+        List<CategoryEntity> categoryEntities = categoryDao.getAllCategoriesOrderedByName();
+        return categoryEntities;
+    }
+
+    /**
+     * Gets a List of all CategoryEntities for given restaurant with given restaurantUuid
+     *
+     * @param restaurantUuid
+     * @return List of CategoryEntity
+     */
+    public List<CategoryEntity> getCategoriesByRestaurant(final String restaurantUuid) {
+        List<CategoryEntity> categoryEntities = categoryDao.getCategoriesByRestaurant(restaurantUuid);
+
+        return categoryEntities;
     }
 }
