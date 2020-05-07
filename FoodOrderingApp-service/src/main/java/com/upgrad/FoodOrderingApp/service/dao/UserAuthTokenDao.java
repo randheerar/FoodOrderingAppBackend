@@ -13,16 +13,6 @@ public class UserAuthTokenDao {
     @PersistenceContext private EntityManager entityManager;
 
     /**
-     * This method stores authorization access token in the database
-     *
-     * @param userAuthTokenEntity the CustomerAuthEntity object from which new authorization will be
-     *     created
-     */
-    public void createCustomerAuthToken(CustomerAuthEntity userAuthTokenEntity) {
-        entityManager.persist(userAuthTokenEntity);
-    }
-
-    /**
      *
      * @param accessToken access-token obtained during successful login.
      * @return CustomerAuthEntity or null of token not found in database helping to find the customer using the access token.

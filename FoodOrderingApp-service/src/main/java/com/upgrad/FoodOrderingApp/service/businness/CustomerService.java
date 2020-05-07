@@ -15,9 +15,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -34,12 +32,6 @@ public class CustomerService {
 
     @Autowired
     private UserAuthTokenDao userAuthTokenDao;
-
-//    boolean isValidEmail(String email) {
-//        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-//        return email.matches(regex);
-//    }
-
 
     /**
      * logic for 'signup' endpoint.
@@ -65,18 +57,11 @@ public class CustomerService {
             if (!isValidEmail(customerEntity.getEmailAddress()))
                 throw new SignUpRestrictedException("SGR-002", "Invalid email-id format!");
 
-//            if (!customerEntity.getContactNumber().matches("[0-9]+") || customerEntity.getContactNumber().length() != 10)
-//                throw new SignUpRestrictedException("SGR-003", "Invalid contact number!)");
-            if (!isValidContactNumber(customerEntity.getContactNumber())) {
-                throw new SignUpRestrictedException("SGR-003", "Invalid contact number!");
-            }
+            if (!customerEntity.getContactNumber().matches("[0-9]+") || customerEntity.getContactNumber().length() != 10)
+                throw new SignUpRestrictedException("SGR-003", "Invalid contact number!)");
 
-//            if (!customerEntity.getPassword().matches("^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^]).{8,}$"))
-//                throw new SignUpRestrictedException("SGR-004", "Weak password!");
-
-            if (!isValidPassword(customerEntity.getPassword())) {
+            if (!customerEntity.getPassword().matches("^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^]).{8,}$"))
                 throw new SignUpRestrictedException("SGR-004", "Weak password!");
-            }
 
             customerEntity.setUuid(UUID.randomUUID().toString());
 
@@ -90,39 +75,6 @@ public class CustomerService {
         }
     }
 
-    @Transactional(noRollbackFor = {TransactionException.class})
-    public CustomerAuthEntity signoutUser(String accessToken) throws AuthorizationFailedException {
-
-        CustomerAuthEntity userAuthTokenEntity = checkAccessToken(accessToken);
-         return customerDao.signoutUser(userAuthTokenEntity);
-
-    }
-
-    @Transactional(noRollbackFor = {TransactionException.class})
-    public CustomerAuthEntity checkAccessToken(String accessToken) throws AuthorizationFailedException{
-        CustomerAuthEntity userAuthTokenEntity = customerDao.checkAuthToken(accessToken.replace("Bearer ",""));
-        if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in");
-        }
-        ZonedDateTime getLogoutAt = userAuthTokenEntity.getLogoutAt();
-        ZonedDateTime dateCurrent = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
-        if (getLogoutAt != null)
-            if (getLogoutAt.isBefore(dateCurrent))
-                throw new AuthorizationFailedException("ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
-
-
-        /**Your session is expired. Log in again to access this endpoint*/
-        ZonedDateTime expireTime = userAuthTokenEntity.getExpiresAt();
-
-        if (expireTime != null)
-            if (expireTime.isBefore(dateCurrent))
-                throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
-
-
-
-            return userAuthTokenEntity;
-
-    }
     @Transactional(noRollbackFor = {TransactionException.class})
     public CustomerAuthEntity authenticate(final String phone, final String password)
             throws AuthenticationFailedException {
@@ -153,42 +105,30 @@ public class CustomerService {
         else {
             throw new AuthenticationFailedException("ATH-002", "Invalid Credentials");
         }
-
-
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomer(final CustomerEntity customer) {
-        return customerDao.updateUser(customer);
+        return customerDao.updateCustomer(customer);
     }
 
-    @Transactional(noRollbackFor={TransactionException.class})
-    public CustomerAuthEntity signout(String  accessToken) throws AuthorizationFailedException {
-        return signoutUser(accessToken);
-    }
-
-   /* @Transactional
-    public CustomerEntity signupCustomer(CustomerEntity users) throws SignUpRestrictedException {
-        return signup(users);
-
-    }*/
-   @Transactional(noRollbackFor = {TransactionException.class})
-
-    public CustomerEntity updateCustomerPassword(final String oldPassword, final String newPassword, final CustomerEntity customerEntity) throws UpdateCustomerException {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updateCustomerPassword(
+            final String oldPassword, final String newPassword, final CustomerEntity customerEntity)
+            throws UpdateCustomerException {
 
        if(newPassword.matches("^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^]).{8,}$")) {
-
-           // CustomerEntity customers = customerDao.getCustomerByUUID(userAuthTokenEntity.getUuid());
-
            String encryptedPassword_old = passwordCryptographyProvider.encrypt(oldPassword, customerEntity.getSalt());
+
            if (!encryptedPassword_old.equals(customerEntity.getPassword())) {
                throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
            }
+
            String[] encryptedText = cryptographyProvider.encrypt(newPassword);
            customerEntity.setSalt(encryptedText[0]);
            customerEntity.setPassword(encryptedText[1]);
 
-           return customerDao.updateUser(customerEntity);
+           return customerDao.updateCustomer(customerEntity);
        } else {
            throw new UpdateCustomerException("UCR-001", "Weak password!");
        }
@@ -246,23 +186,6 @@ public class CustomerService {
     private boolean isValidEmail(final String emailAddress) {
         EmailValidator validator = EmailValidator.getInstance();
         return validator.isValid(emailAddress);
-    }
-
-    // method checks for given contact number is valid or not
-    private boolean isValidContactNumber(final String contactNumber) {
-        if (contactNumber.length() != 10) {
-            return false;
-        }
-        for (int i = 0; i < contactNumber.length(); i++) {
-            if (!Character.isDigit(contactNumber.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isValidPassword(final String password) {
-        return password.matches("^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^]).{8,}$");
     }
 
 }

@@ -145,7 +145,7 @@ public class CustomerController {
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.PUT,
-            path = "/",
+            path = "",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(
@@ -157,7 +157,6 @@ public class CustomerController {
                 || updateCustomerRequest.getFirstName().isEmpty()) {
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
         }
-
         CustomerEntity customerEntity= customerService.getCustomer(accessToken.replace("Bearer ",""));
         customerEntity.setFirstName(updateCustomerRequest.getFirstName());
         customerEntity.setLastName(updateCustomerRequest.getLastName());

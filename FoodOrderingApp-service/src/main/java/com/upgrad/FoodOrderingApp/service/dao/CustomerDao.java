@@ -71,9 +71,9 @@ public class CustomerDao {
     }
 
 
-    public CustomerEntity updateUser(final CustomerEntity customer) {
-        entityManager.merge(customer);
-        return customer;
+    public CustomerEntity updateCustomer(final CustomerEntity customerEntity) {
+        entityManager.merge(customerEntity);
+        return customerEntity;
     }
 
     @Transactional
