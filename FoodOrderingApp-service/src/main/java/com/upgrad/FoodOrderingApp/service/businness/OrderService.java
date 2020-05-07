@@ -21,10 +21,8 @@ public class OrderService {
     @Autowired private OrderDao orderDao;
 
     /**
-     * This method contains business logic to get coupon details by coupon name.
-     *
+     * Logic to get coupon details by coupon name.
      * @param couponName
-     * @return
      * @throws CouponNotFoundException if coupon with that name doesn't exist in database.
      */
     public CouponEntity getCouponByCouponName(String couponName) throws CouponNotFoundException {
@@ -43,10 +41,8 @@ public class OrderService {
     }
 
     /**
-     * This method contains business logic to get coupon details by coupon id.
-     *
+     * Logic to get coupon details by coupon id.
      * @param couponUUID
-     * @return
      * @throws CouponNotFoundException if coupon with that id doesn't exist in database.
      */
     public CouponEntity getCouponByCouponId(String couponUUID) throws CouponNotFoundException {
@@ -61,8 +57,7 @@ public class OrderService {
     }
 
     /**
-     * Fetches the orders of the customer in a sorted manner with latest order being on the top.
-     *
+     * Retrieves the orders of the customer in a sorted manner with latest order on the top.
      * @param customerUUID customer whose orders are to be fetched.
      * @return list of orders made by customer
      */
@@ -71,8 +66,7 @@ public class OrderService {
     }
 
     /**
-     * Persists the order in the database.
-     *
+     * Save the order in the database
      * @param order Order to be persisted.
      * @return Persisted order.
      */
@@ -86,8 +80,7 @@ public class OrderService {
     }
 
     /**
-     * Persists the Order Item.
-     *
+     * Save the Order Item
      * @param orderItemEntity Order Item to be persisted.
      * @return persisted order item.
      */

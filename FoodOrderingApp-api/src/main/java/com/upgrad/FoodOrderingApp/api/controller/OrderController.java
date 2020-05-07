@@ -50,10 +50,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-
-import static com.upgrad.FoodOrderingApp.api.controller.RestaurantController.getTokenFromAuthorization;
 
 @RestController
 @RequestMapping("/")
@@ -72,7 +69,7 @@ public class OrderController {
     @Autowired private ItemService itemService;
 
     /**
-     * This API endpoint gets coupon details by coupon name
+     * API to get coupon details by coupon name
      *
      * @param authorization Bearer <access-token>
      * @param couponName Name of the coupon whose details are required.
@@ -90,9 +87,7 @@ public class OrderController {
             @PathVariable("coupon_name") final String couponName)
             throws AuthorizationFailedException, CouponNotFoundException {
 
-        String accessToken = getTokenFromAuthorization(authorization);
-
-        customerService.getCustomer(accessToken);
+        customerService.getCustomer(authorization.replace("Bearer ",""));
 
         CouponEntity couponEntity = orderService.getCouponByCouponName(couponName);
 
@@ -105,7 +100,7 @@ public class OrderController {
     }
 
     /**
-     * Fetch the orders of the customer.
+     * API to fetch Orders made by the logged in Customer
      *
      * @param authorization Bearer <access-token>
      * @return CustomerOrderResponse
@@ -120,12 +115,8 @@ public class OrderController {
             @RequestHeader("authorization") final String authorization)
             throws AuthorizationFailedException {
 
-        String accessToken = getTokenFromAuthorization(authorization);
+        CustomerEntity customerEntity = customerService.getCustomer(authorization.replace("Bearer ",""));
 
-        // Identify customer from the access token.
-        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
-
-        // Get all the orders of the customer.
         List<OrderEntity> ordersOfCustomer =
                 orderService.getOrdersByCustomers(customerEntity.getUuid());
 
@@ -151,7 +142,7 @@ public class OrderController {
     }
 
     /**
-     * To save the customer order if it is valid.
+     * API to save Customer Order
      *
      * @param authorization Bearer <access-token>
      * @param saveOrderRequest Contains the order details.
@@ -173,10 +164,8 @@ public class OrderController {
             @RequestBody(required = true) SaveOrderRequest saveOrderRequest)
             throws AuthorizationFailedException, CouponNotFoundException, AddressNotFoundException,
             PaymentMethodNotFoundException, RestaurantNotFoundException, ItemNotFoundException {
-        String accessToken = getTokenFromAuthorization(authorization);
 
-        // Identify customer from the access token.
-        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+        CustomerEntity customerEntity = customerService.getCustomer(authorization.replace("Bearer ",""));
 
         CouponEntity couponEntity =
                 orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
@@ -226,8 +215,6 @@ public class OrderController {
 
         return new ResponseEntity<SaveOrderResponse>(saveOrderResponse, HttpStatus.CREATED);
     }
-
-    // Below private methods takes in the entities and converts them to valid response.
 
     private OrderListCustomer getOrderListCustomer(CustomerEntity customer) {
         OrderListCustomer orderListCustomer = new OrderListCustomer();

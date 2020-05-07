@@ -12,8 +12,8 @@ public class CategoryService {
 
     @Autowired public CategoryDao categoryDao;
 
-    /*Get category for given category uuid
-     *
+    /**
+     * Logic to get Category based on Category UUID
      * @param uuid of category
      * @return CategoryEntity for given uuid
      * */
@@ -28,9 +28,8 @@ public class CategoryService {
         return categoryEntity;
     }
 
-    /*Get all categories in db
-     *
-     *
+    /**
+     * Get all categories ordered by name
      * @return List of CategoryEntity
      * */
     public List<CategoryEntity> getAllCategoriesOrderedByName() {
@@ -39,8 +38,7 @@ public class CategoryService {
     }
 
     /**
-     * Gets a List of all CategoryEntities for given restaurant with given restaurantUuid
-     *
+     * Gets a list of all CategoryEntities for given restaurant with given restaurantUuid
      * @param restaurantUuid
      * @return List of CategoryEntity
      */

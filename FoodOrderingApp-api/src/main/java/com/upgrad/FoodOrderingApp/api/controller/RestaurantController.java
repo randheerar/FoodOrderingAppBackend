@@ -50,8 +50,7 @@ public class RestaurantController {
     @Autowired private CategoryService categoryService;
 
     /**
-     * This API endpoint gets list of all restaurant in order of their ratings
-     *
+     * API to gets list of all restaurant in order of their ratings
      * @return
      */
     @CrossOrigin
@@ -71,8 +70,7 @@ public class RestaurantController {
     }
 
     /**
-     * This API endpoint gets list of all restaurant found for given search string
-     *
+     * API to get list of all restaurant found for given search string
      * @param restaurantName Name of the restaurant that one would like to search
      * @return RestaurantListResponse
      * @throws RestaurantNotFoundException If the restaurant doesn't exist in database.
@@ -98,8 +96,7 @@ public class RestaurantController {
     }
 
     /**
-     * This API endpoint gets list of all restaurant found for given category UUID
-     *
+     * API to get list of all restaurant found for given category UUID
      * @param categoryUuid UUID of the category
      * @return RestaurantListResponse
      * @throws CategoryNotFoundException if the category with the given UUID is not found in the
@@ -125,7 +122,7 @@ public class RestaurantController {
     }
 
     /**
-     * This API endpoint gets restaurant for given restaurant UUID
+     * API to get restaurant for a given restaurant UUID
      *
      * @param restaurantUuid UUID of the restaurant whose details are requested
      * @return RestaurantDetailsResponse
@@ -150,15 +147,12 @@ public class RestaurantController {
     }
 
     /**
-     * This API endpoint updates the restaurant rating by customer
-     *
+     * API for the Customer to update Restaurant rating
      * @param authorization Bearer <access-token>
      * @param restaurantUuid UUID of the restaurant whose rating is to be updated.
      * @param customerRating Actual rating value that is to be updated.
-     * @return
      * @throws AuthorizationFailedException if the given token is not valid.
-     * @throws RestaurantNotFoundException if the restaurant with the given uuid doesn't exist in
-     *     database.
+     * @throws RestaurantNotFoundException if the restaurant with the given uuid doesn't exist in database
      * @throws InvalidRatingException if the rating is less than 1 or grater than 5.
      */
     @CrossOrigin
@@ -172,8 +166,7 @@ public class RestaurantController {
             @PathVariable("restaurant_id") final String restaurantUuid,
             @RequestParam("customer_rating") final Double customerRating)
             throws AuthorizationFailedException, RestaurantNotFoundException, InvalidRatingException {
-        String accessToken = getTokenFromAuthorization(authorization);
-        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+        CustomerEntity customerEntity = customerService.getCustomer(authorization.replace("Bearer ",""));
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantUuid);
         RestaurantEntity updatedRestaurantEntity =
                 restaurantService.updateRestaurantRating(restaurantEntity, customerRating);
@@ -184,8 +177,11 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantUpdatedResponse>(restaurantUpdatedResponse, HttpStatus.OK);
     }
 
-    /* Creates a List of RestaurantList */
-
+    /**
+     * Method to create Restaurant List
+     * @param allRestaurants
+     * @return
+     */
     private List<RestaurantList> createListOfRestaurantList(
             final List<RestaurantEntity> allRestaurants) {
         List<RestaurantList> allRestaurantsList = new ArrayList<>();
@@ -216,8 +212,9 @@ public class RestaurantController {
         return allRestaurantsList;
     }
 
-    /* Creates RestaurantDetailsResponse */
-
+    /**
+     *  Method to create RestaurantDetailsResponse
+     */
     private RestaurantDetailsResponse createRestaurantDetailsResponse(
             RestaurantEntity restaurantEntity) {
 
@@ -239,8 +236,9 @@ public class RestaurantController {
         return restaurantDetailsResponse;
     }
 
-    /* Creates RestaurantDetailsResponseAddress */
-
+    /**
+     * Method to create RestaurantDetailsResponseAddress
+     */
     private RestaurantDetailsResponseAddress createRestaurantDetailsResponseAddress(
             AddressEntity restaurantAddress) {
         RestaurantDetailsResponseAddress restaurantDetailsResponseAddress =
@@ -261,8 +259,9 @@ public class RestaurantController {
         return restaurantDetailsResponseAddress;
     }
 
-    /* Gets List<CategoryList>  in the resturant  */
-
+    /**
+     * Gets all category items in the restaurant
+     */
     private List<CategoryList> getAllCategoryItemsInRestaurant(final String restaurantUuid) {
         List<CategoryList> allCategoryItems = new ArrayList<>();
         List<CategoryEntity> categories = categoryService.getCategoriesByRestaurant(restaurantUuid);
@@ -280,8 +279,9 @@ public class RestaurantController {
         return allCategoryItems;
     }
 
-    /* Gets List<ItemList>  in given category  in the resturant  */
-
+    /**
+     * Method to get list of items in a category by Restaurant
+    */
     private List<ItemList> getAllItemsInCategoryInRestaurant(
             final String restaurantUuid, final String categoryUuid) {
         List<ItemList> itemsInCategoryInRestaurant = new ArrayList<>();
@@ -302,21 +302,5 @@ public class RestaurantController {
         }
 
         return itemsInCategoryInRestaurant;
-    }
-
-    /**
-     * This method extracts the access-token from the authorization header value.
-     *
-     * @param authorization Bearer <access-token>
-     * @return access-token
-     * @throws AuthorizationFailedException
-     */
-    public static String getTokenFromAuthorization(String authorization)
-            throws AuthorizationFailedException {
-        String[] authParts = authorization.split("Bearer ");
-        if (authParts.length != 2) {
-            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
-        }
-        return authParts[1];
     }
 }

@@ -26,12 +26,17 @@ public class ItemController {
     @Autowired
     private RestaurantService restaurantService;
 
+    /**
+     * API to fetch Top 5 Items in the order of Popularity
+     * @param restaurantId
+     * @return
+     * @throws RestaurantNotFoundException
+     */
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, path = "/item/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ItemListResponse> getItemsByPopularity(
             @PathVariable("restaurant_id") final String restaurantId) throws RestaurantNotFoundException
     {
-
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
 
         List<ItemEntity> itemList = itemService.getItemsByPopularity(restaurantEntity);

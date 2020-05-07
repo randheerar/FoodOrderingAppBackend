@@ -31,6 +31,10 @@ public class AddressService {
     private OrdersDao ordersDao;
 
 
+    /**
+     * Logic to get all address saved for a Customer
+     * @param customerEntity Customer details based on authorization header
+     */
     public List<AddressEntity> getAllAddress(CustomerEntity customerEntity) {
         List<AddressEntity> addressEntityList = new ArrayList<>();
         List<CustomerAddressEntity> customerAddressEntityList =
@@ -42,6 +46,13 @@ public class AddressService {
         return addressEntityList;
     }
 
+    /**
+     * Logic to save Address of a Customer
+     * @param address
+     * @param customer
+     * @return
+     * @throws SaveAddressException
+     */
     public AddressEntity saveAddress(AddressEntity address, CustomerEntity customer) throws SaveAddressException {
 
         if (address.getActive() != null
@@ -70,13 +81,11 @@ public class AddressService {
         }
     }
 
-    public CustomerAddressEntity saveCustomerAddressRelation(CustomerAddressEntity customerAddress) throws AuthorizationFailedException, AddressNotFoundException {
-
-
-        return customerAdressDao.createCustomerAddressRelation(customerAddress);
-
-    }
-
+    /**
+     * Logic to delete Address of a Customer
+     * @param addressEntity
+     * @return
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public AddressEntity deleteAddress(final AddressEntity addressEntity) {
         final List<OrderEntity> orders = ordersDao.getAllOrdersByAddress(addressEntity);
@@ -93,7 +102,6 @@ public class AddressService {
 
     /**
      * Returns state for a given UUID
-     *
      * @param stateUuid UUID of the state entity
      * @return StateEntity object.
      * @throws AddressNotFoundException If given uuid does not exist in database.
@@ -107,8 +115,7 @@ public class AddressService {
     }
 
     /**
-     * This method implements logic for getting the Address using address uuid.
-     *
+     * Logic for getting the Address using Address UUID
      * @param addressId Address UUID.
      * @param customerEntity Customer whose addresses has to be fetched.
      * @return AddressEntity object.
@@ -133,7 +140,10 @@ public class AddressService {
         return addressEntity;
     }
 
-    // checks if the pincode entered is invalid (i.e it does not include only numbers or its size is not six)
+    /**
+     * Method to check if Pincode entered is valid or not
+     * @param pincode
+     */
     private boolean isPincodeValid(final String pincode) {
         if (pincode.length() != 6) {
             return false;

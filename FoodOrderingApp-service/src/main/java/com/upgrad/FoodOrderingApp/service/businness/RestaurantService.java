@@ -17,8 +17,7 @@ public class RestaurantService {
     @Autowired private RestaurantDao restaurantDao;
 
     /**
-     * This method gets the restaurant details.
-     *
+     * Logic to get the restaurant details
      * @param uuid UUID of the restaurant.
      * @return
      * @throws RestaurantNotFoundException if restaurant with UUID doesn't exist in the database.
@@ -32,8 +31,7 @@ public class RestaurantService {
     }
 
     /**
-     * Gets all the restaurants in DB.
-     *
+     * Get the restaurants in DB
      * @return List of RestaurantEntity
      */
     public List<RestaurantEntity> restaurantsByRating() {
@@ -42,8 +40,7 @@ public class RestaurantService {
     }
 
     /**
-     * Gets restaurants in DB based on search string.
-     *
+     * Get restaurants in DB based on search string.
      * @return List of RestaurantEntity
      */
     public List<RestaurantEntity> restaurantsByName(final String search)
@@ -59,7 +56,6 @@ public class RestaurantService {
 
     /**
      * Gets all the restaurants in DB based on Category Uuid
-     *
      * @return List of RestaurantEntity
      */
     public List<RestaurantEntity> restaurantByCategory(final String categoryUuid)
@@ -78,7 +74,6 @@ public class RestaurantService {
 
     /**
      * Updates the customer rating for a restaurant
-     *
      * @param restaurantEntity Restaurant whose rating is to be done, customerRating as provided by
      *     customer
      * @return RestaurantEntity
