@@ -14,19 +14,15 @@ public class PaymentService {
     @Autowired private PaymentDao paymentDao;
 
     /**
-     * This method gets all the payment methods
-     *
-     * @return
+     * Logic to get all the payment methods
      */
     public List<PaymentEntity> getAllPaymentMethods() {
         return paymentDao.getAllPaymentMethods();
     }
 
     /**
-     * This method gets the payment record from database based on the UUID.
-     *
+     * Logic to get payment method based on Payment method UUID
      * @param paymentUUID UUID of the payment that is to be fetched
-     * @return
      */
     public PaymentEntity getPaymentByUUID(String paymentUUID) throws PaymentMethodNotFoundException {
         PaymentEntity payment = paymentDao.getPaymentByUUID(paymentUUID);

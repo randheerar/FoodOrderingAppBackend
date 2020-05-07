@@ -23,8 +23,7 @@ public class PaymentController {
     @Autowired PaymentService paymentService;
 
     /**
-     * This API endpoint gets all the payment methods
-     *
+     * API to get all Payment methods added by the Customer
      * @return Payment methods
      */
     @CrossOrigin

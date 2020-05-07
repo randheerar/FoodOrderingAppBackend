@@ -29,7 +29,6 @@ public class CategoryController {
 
     /**
      * This API endpoint gets list of all categories
-     *
      * @return CategoriesListResponse
      */
     @CrossOrigin
@@ -59,12 +58,10 @@ public class CategoryController {
     }
 
     /**
-     * This API endpoint gets CategoryDetail for given category UUID
-     *
+     * API to get Category details fetched based on Category UUID
      * @param categoryUuid UUID of the category for which the detail is required.
      * @return CategoryDetailsResponse
-     * @throws CategoryNotFoundException If the category with the given UUID doesn't exist in the
-     *     database.
+     * @throws CategoryNotFoundException If the category with the given UUID doesn't exist in the database
      */
     @CrossOrigin
     @RequestMapping(

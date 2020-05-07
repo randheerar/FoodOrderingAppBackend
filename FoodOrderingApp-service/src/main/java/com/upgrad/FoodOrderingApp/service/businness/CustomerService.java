@@ -75,6 +75,13 @@ public class CustomerService {
         }
     }
 
+    /**
+     * Logic to authenticate a Customer/User
+     * @param phone
+     * @param password
+     * @return
+     * @throws AuthenticationFailedException
+     */
     @Transactional(noRollbackFor = {TransactionException.class})
     public CustomerAuthEntity authenticate(final String phone, final String password)
             throws AuthenticationFailedException {
@@ -107,6 +114,11 @@ public class CustomerService {
         }
     }
 
+    /**
+     * Logic to Update Customer details
+     * @param customer
+     * @return
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomer(final CustomerEntity customer) {
         return customerDao.updateCustomer(customer);
@@ -135,10 +147,9 @@ public class CustomerService {
     }
 
     /**
-     * This method retrieves the Customer info
-     *
-     * @param accessToken Takes access-token as input which is obtained during successful login.
-     * @return CustomerEntity - Customer who obtained this access-token during his login.
+     * Logic to get Customer details from database
+     * @param accessToken
+     * @return CustomerEntity
      * @throws AuthorizationFailedException Based on token validity.
      */
     public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
@@ -161,15 +172,13 @@ public class CustomerService {
     }
 
     /**
-     * This method implements the logic for 'logout' endpoint.
-     *
-     * @param accessToken Customers access token in 'Bearer <access-token>' format.
+     * Logic to logout a Customer
+     * @param accessToken
      * @return Updated CustomerAuthEntity object.
      * @throws AuthorizationFailedException if any of the validation fails on customer authorization.
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity logout(final String accessToken) throws AuthorizationFailedException {
-        System.out.println("test1 "+accessToken);
         CustomerAuthEntity userAuthTokenEntity = userAuthTokenDao.getCustomerAuthByToken(accessToken);
         CustomerEntity customerEntity = getCustomer(accessToken);
         userAuthTokenEntity.setCustomer(customerEntity);
@@ -178,15 +187,23 @@ public class CustomerService {
         return userAuthTokenEntity;
     }
 
+    /**
+     * Method to check if the Contact Number is already in use
+     * @param contactNumber
+     * @return
+     */
     private boolean isContactNumberInUse(final String contactNumber) {
         return customerDao.getUserByPhone(contactNumber) != null;
     }
 
-    // method checks for format of the email is correct or not using EmailValidator
+    /**
+     * Method to check if the entered Email Address is valid or not
+     * @param emailAddress
+     * @return true if valid else false
+     */
     private boolean isValidEmail(final String emailAddress) {
         EmailValidator validator = EmailValidator.getInstance();
         return validator.isValid(emailAddress);
     }
-
 }
 

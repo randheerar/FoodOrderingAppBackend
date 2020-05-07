@@ -29,6 +29,15 @@ public class AddressController {
     @Autowired
     AddressService addressService;
 
+    /**
+     * API to save customer's address
+     * @param accessToken Input format 'Bearer <accessToken>'
+     * @param saveAddressRequest
+     * @return
+     * @throws AddressNotFoundException
+     * @throws AuthorizationFailedException
+     * @throws SaveAddressException
+     */
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.POST,
@@ -61,6 +70,11 @@ public class AddressController {
         return new ResponseEntity<SaveAddressResponse>(saveAddressResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * API to retrieve all addresses of the Customer
+     * @param accessToken Input format 'Bearer <accessToken>'
+     * @throws AuthorizationFailedException
+     */
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.GET,
@@ -98,6 +112,13 @@ public class AddressController {
         return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
     }
 
+    /**
+     * API to delete Customer Address
+     * @param address_id Customer Address UUID
+     * @param accessToken Input format 'Bearer <accessToken>'
+     * @throws AuthorizationFailedException
+     * @throws AddressNotFoundException
+     */
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.DELETE,
@@ -119,6 +140,9 @@ public class AddressController {
         return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse, HttpStatus.OK);
     }
 
+    /**
+     * API to retrieve all States
+     */
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.GET,
