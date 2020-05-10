@@ -37,8 +37,7 @@ public class AddressService {
      */
     public List<AddressEntity> getAllAddress(CustomerEntity customerEntity) {
         List<AddressEntity> addressEntityList = new ArrayList<>();
-        List<CustomerAddressEntity> customerAddressEntityList =
-                addressDao.customerAddressByCustomer(customerEntity);
+        List<CustomerAddressEntity> customerAddressEntityList = addressDao.customerAddressByCustomer(customerEntity);
         if (customerAddressEntityList != null || !customerAddressEntityList.isEmpty()) {
             customerAddressEntityList.forEach(
                     customerAddressEntity -> addressEntityList.add(customerAddressEntity.getAddress()));
@@ -70,7 +69,6 @@ public class AddressService {
             }
 
             AddressEntity addAddress = addressDao.createAddress(address);
-
             CustomerAddressEntity createdCustomerAddressEntity = new CustomerAddressEntity();
             createdCustomerAddressEntity.setCustomer(customer);
             createdCustomerAddressEntity.setAddress(addAddress);

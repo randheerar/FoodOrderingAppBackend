@@ -121,7 +121,7 @@ public class CustomerController {
         customerEntity.setPassword(signupUserRequest.getPassword());
         customerEntity.setContactNumber(signupUserRequest.getContactNumber());
 
-        CustomerEntity createdUser = customerService.saveCustomer(customerEntity);
+            CustomerEntity createdUser = customerService.saveCustomer(customerEntity);
 
         SignupCustomerResponse userResponse =
                 new SignupCustomerResponse()

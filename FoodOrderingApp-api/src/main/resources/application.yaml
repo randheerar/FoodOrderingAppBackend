@@ -9,10 +9,9 @@ spring:
     name: FoodOrderingApp-api
 
   datasource:
-    driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/restaurantdb
     username: postgres
-    password: password
+    password: admin
 
   jpa:
     properties:
